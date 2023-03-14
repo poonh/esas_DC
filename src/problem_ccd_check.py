@@ -6,7 +6,7 @@ import os,sys,string
 from esas_commands import esas_commands
 
 #create two filtered event list from the corner event list in the energy range [0.5-0.8]keV and [2.5-5.0]keV and compare the total count rates to check for ccd anomaly.
-ccd="mos2"
+ccd="mos1" #change this to mos2 if you want to do mos2
 
 elow1=0.5         #units in keV 
 elow2=2.5

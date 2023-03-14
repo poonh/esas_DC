@@ -11,16 +11,17 @@ from esas_commands import esas_commands
 ccd="mos1"
 elow=2.5         #units in keV 
 ehigh=12.0
-mos1=commands.getoutput("head -1 log/prefix.log | gawk '{print $1}'")
-mos2=commands.getoutput("head -2 log/prefix.log | tail -1 | gawk '{print $1}'")
-pn=commands.getoutput("tail -1 log/prefix.log  | gawk '{print $1}'")
+binsize=60 #60 seconds is the default for binning lightcurves, see https://xmm-tools.cosmos.esa.int/external/sas/current/doc/espfilt.pdf
+sig=2.    #when making the gaussian fit to the histogram, data within 2 sigma are filtered
+histogram_bin=0.05   #the histogram is in uniform binsize in units of counts per second
+fit_limit=1.4    #the range for fitting the histogram, which is the (hightest count rates from the histogram)*fit_limit and the same value divided by fit_limit 
+legendsize=10
 
 if ccd=="mos1":
-   CCD=mos1
+   CCD="mos1S001"
 elif ccd=="mos2":
-   CCD=mos2
-elif ccd=="pn":
-   CCD=pn
+   CCD="mos2S002"
+
 
 inputfile="%s-ori.fits"%CCD   #product of emchain/epchain, which is an unfiltered event list
 a=esas_commands()
@@ -34,11 +35,8 @@ else:
    print "The LCs for the FOV and corner are NOT produced. Please check."
    exit()
 
-binsize=60 #60 seconds is the default for binning lightcurves, see https://xmm-tools.cosmos.esa.int/external/sas/current/doc/espfilt.pdf
-sig=2.    #when making the gaussian fit to the histogram, data within 2 sigma are filtered
-histogram_bin=0.05   #the histogram is in uniform binsize in units of counts per second
-fit_limit=1.4    #the range for fitting the histogram, which is the (hightest count rates from the histogram)*fit_limit and the same value divided by fit_limit 
-legendsize=10
+
+
 
 def func(x, a, x0, sigma):  #gaussian function
     return a*np.exp(-(x-x0)**2/(2*sigma**2))
@@ -200,7 +198,7 @@ for i in range(0,len(mean_cr)):
        unwanted_errC.append(mean_errC[i])
        unwanted_time.append(mid_time[i])
 
-gtifile=open("%s_gti.txt"%CCD,"w")
+gtifile=open("%s_gti_ED.txt"%CCD,"w")
 
 if unwanted_time[0]!=mid_time[0]: 
 #   print time1[0]-0.5,"       ",unwanted_time[0]-binsize/2.-0.5+time1[0]
@@ -224,9 +222,9 @@ axarr[0].legend(loc='upper right',fontsize=legendsize, frameon=False)
 axarr[1].legend(loc='upper right',fontsize=legendsize, frameon=False)
 axarr[2].legend(loc='upper right',fontsize=legendsize, frameon=False)
 
-if os.path.isfile("%s_%s_%s_gti.png"%(CCD,elow,ehigh)) == True:
-   os.system("rm %s_%s_%s_gti.png"%(CCD,elow,ehigh))
-plt.savefig("%s_%s_%s_gti.png"%(CCD,elow,ehigh))
+if os.path.isfile("%s_%s_%s_gti_ED.png"%(CCD,elow,ehigh)) == True:
+   os.system("rm %s_%s_%s_gti_ED.png"%(CCD,elow,ehigh))
+plt.savefig("%s_%s_%s_gti_ED.png"%(CCD,elow,ehigh))
 #plt.show()
 
 #creation of the good time interval file for making the filtered event list - mos1S001_clean.fits
