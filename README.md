@@ -1,4 +1,3 @@
-This is a tutorial of ESAS.
 <!DOCTYPE html>
 <head>
     <meta charset="utf-8"/>
