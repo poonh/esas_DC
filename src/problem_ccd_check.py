@@ -6,7 +6,7 @@ import os,sys,string
 from esas_commands import esas_commands
 
 #create two filtered event list from the corner event list in the energy range [0.5-0.8]keV and [2.5-5.0]keV and compare the total count rates to check for ccd anomaly.
-ccd="mos1" #change this to mos2 if you want to do mos2
+ccd="mos2" #change this to mos2 if you want to do mos2
 
 elow1=0.5         #units in keV 
 elow2=2.5
@@ -21,8 +21,7 @@ if ccd=="mos1":
    CCD=mos1
 elif ccd=="mos2":
    CCD=mos2
-elif ccd=="pn":
-   CCD=pn
+
 
 
 a=esas_commands()
@@ -66,3 +65,7 @@ for i in range(2,8):
        ccdFile.write(str(i)+" missing ccd"+"\n")
 
 ccdFile.close()
+
+#make corner imag in the low energy range
+cornImage=a.CornImage(CCD,elow1,ehigh1)
+print "The corner image %s is produced. You can check for ccd anomaly using ds9."%cornImage
