@@ -67,5 +67,6 @@ for i in range(2,8):
 ccdFile.close()
 
 #make corner imag in the low energy range
-cornImage=a.CornImage(CCD,elow1,ehigh1)
-print "The corner image %s is produced. You can check for ccd anomaly using ds9."%cornImage
+cornImage1=a.CornImage(CCD,elow1,ehigh1)
+cornImage2=a.CornImage(CCD,elow2,ehigh2)
+print "The corner images %s and %s are produced. You can check for ccd anomaly using ds9."%(cornImage1,cornImage2)
