@@ -1,14 +1,8 @@
-mos prefix 1: 1S001
-mos prefix 2: 2S002
-pn prefix 1: S003
-verb: 1
-scale: 0.25
-rate: 1e-18
-rates: 1e-14
-rateh: 1e-14
-dist: 0
-mlmin: 15
-   
+setenv SAS_CCF ccf.cif 
+setenv SAS_ODF `ls -1 *SUM.SAS`
+
+atthkgen atthkset=atthk.fits timestep=1
+
 evselect table=mos1S001-clean.fits:EVENTS withfilteredset=yes expression='(PATTERN<=12)&&(FLAG == 0)&&(PI in [400:2300])' filtertype=expression imagebinning='imageSize' imagedatatype='Int32' imageset=mos1S001-obj-im.fits squarepixels=yes ignorelegallimits=yes withxranges=yes withyranges=yes xcolumn='X' ximagesize=900 ximagemax=48400 ximagemin=3401 ycolumn='Y' yimagesize=900 yimagemax=48400 yimagemin=3401 updateexposure=yes filterexposure=yes verbosity=1
 
 evselect table=mos2S002-clean.fits:EVENTS withfilteredset=yes expression='(PATTERN<=12)&&(FLAG == 0)&&(PI in [400:2300])' filtertype=expression imagebinning='imageSize' imagedatatype='Int32' imageset=mos2S002-obj-im.fits squarepixels=yes ignorelegallimits=yes withxranges=yes withyranges=yes xcolumn='X' ximagesize=900 ximagemax=48400 ximagemin=3401 ycolumn='Y' yimagesize=900 yimagemax=48400 yimagemin=3401 updateexposure=yes filterexposure=yes verbosity=1
