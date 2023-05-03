@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>Mathedemo</title>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+<script type="text/javascript"
+  src="http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</head>
+
+
+<body>
+
+<!--
+
+
+
+-->
+  
+ <div class="formula-wrap">
+             <div class="disp-formula" id="equ9" content-id="equ9">
+               <div class="tex-math display-math">$$\begin{eqnarray*}
+
+		 
+rate-400-2300.fits 
+= {C*(counts{\_}image.fits-back{\_}mage.fits-(counts{\_}oot.fits*oot{\_}scale{\_}factor)) \over exposure.fits}
+
+
+\end{eqnarray*}$$</div>
+                                                        </div>
+
+ <div class="formula-wrap">
+             <div class="disp-formula" id="equ9" content-id="equ9">
+               <div class="tex-math display-math">$$\begin{eqnarray*}		 
+\sum {(source-bkg) \over exposure}
+\end{eqnarray*}$$</div>
+             </div>
+	    
+
+
+
+ <div class="formula-wrap">
+             <div class="disp-formula" id="equ9" content-id="equ9">
+               <div class="tex-math display-math">$$\begin{eqnarray*}
+S(x) = \sum {(source-bkg) \over exposure}		 
+\end{eqnarray*}$$</div>
+             </div>
+
+
+
+
+ <div class="formula-wrap">
+             <div class="disp-formula" id="equ9" content-id="equ9">
+               <div class="tex-math display-math">$$\begin{eqnarray*}
+{\Delta} z= \sqrt {({\Delta} x)^2+({\Delta} y)^2+...}	 
+\end{eqnarray*}$$</div>
+             </div>
+
+	     
+<!--
+\Delta S(x) = \sum\left(\frac{\Delta source}{exposure}\right)^2 = \sum\frac{source}
+-->
+	     
+ <div class="formula-wrap">
+             <div class="disp-formula" id="equ9" content-id="equ9">
+               <div class="tex-math display-math">$$\begin{eqnarray*}
+
+		 
+{\Delta} S(x) = \sum{{\left({\Delta}source \over exposure\right)^{2}}} = \sum{{source \over exposure^{2}}}
+
+
+\end{eqnarray*}$$</div>
+             </div>
+
+
+	     
+ <div class="formula-wrap">
+             <div class="disp-formula" id="equ9" content-id="equ9">
+               <div class="tex-math display-math">$$\begin{eqnarray*}
+
+		 
+
+
+
+\end{eqnarray*}$$</div>
+             </div>
+	    
+	     
+
+
+  
+ <div class="formula-wrap">
+             <div class="disp-formula" id="equ9" content-id="equ9">
+                                                            <div class="tex-math display-math">$$\begin{eqnarray*}
+                                                            \boldsymbol{\theta }_{\rm Gaia}=\left[\alpha ,\delta ,\varpi ,\mu _{\alpha }^{*},\mu _{\delta },A,B,F,G,C,H,\gamma ,e,P_{{\rm orb}},T_{p}\right].
+                                                            \end{eqnarray*}$$</div>
+                                                        </div>
+
+
+                                                    <div class="formula-wrap">
+                                                        <div class="disp-formula" id="equ10" content-id="equ10">
+                                                            <div class="tex-math display-math">$$\begin{eqnarray*}
+                                                            \ln L_{{\rm Gaia}}=-\frac{1}{2}\left(\boldsymbol{\theta }_{{\rm Gaia}}-\boldsymbol{\mu }_{{\rm Gaia}}\right)^{\intercal }\boldsymbol{\Sigma }_{{\rm Gaia}}^{-1}\left(\boldsymbol{\theta }_{{\rm Gaia}}-\boldsymbol{\mu }_{{\rm Gaia}}\right).
+                                                            \end{eqnarray*}$$</div>
+                                                        </div>
+                                                        <span class="label">(10)</span>
+                                                    </div>
+
+
+
+						    
+ <div class="formula-wrap">
+                                                        <div class="disp-formula" id="equ11" content-id="equ11">
+                                                            <div class="tex-math display-math">$$\begin{eqnarray*}
+                                                            \ln L_{{\rm RVs}}=-\frac{1}{2}\sum _{i}\frac{\left({\rm RV_{{\rm pred}}}\left(t_{i}\right)-{\rm RV}_{i}\right)^{2}}{\sigma _{{\rm RV,}i}^{2}},
+                                                            \end{eqnarray*}$$</div>
+                                                        </div>
+                                                        <span class="label">(11)</span>
+ </div>
+
+ 
+<h2>Math in TeX notation</h2>
+
+When $a \ne 0$, there are two solutions to \(ax^2 + bx + c = 0\) and they are
+$$x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$
+$$ \begin{array}{rcll}
+y & = & x^{2}+bx+c\\
+  & = & x^{2}+2\times\dfrac{b}{2}x+c\\
+  & = & \underbrace{x^{2}+2\times\dfrac{b}{2}x+\left(\frac{b}{2}\right)^{2}}-
+      {\left(\dfrac{b}{2}\right)^{2}+c}\\
+  &  & \qquad\left(x+{\dfrac{b}{2}}\right)^{2}\\
+  & = & \left(x+\dfrac{b}{2}\right)^{2}-\left(\dfrac{b}{2}\right)^{2}+c 
+  & \left|+\left({\dfrac{b}{2}}\right)^{2}-c\right.\\
+    y+\left(\dfrac{b}{2}\right)^{2}-c & = & \left(x+
+    \dfrac{b}{2}\right)^{2} & \left|\strut(\textrm{vertex form})\right.\\
+y-y_{S} & = & (x-x_{S})^{2}\\
+S(x_{S};y_{S}) & \,\textrm{or}\, 
+    & S\left(-\dfrac{b}{2};\,\left(\dfrac{b}{2}\right)^{2}-c\right)
+\end{array} $$
+
+<h2>Math in MathML notation</h2>
+
+When <math><mi>a</mi><mo>&#x2260;</mo><mn>0</mn></math>,
+there are two solutions to <math>
+  <mi>a</mi><msup><mi>x</mi><mn>2</mn></msup>
+  <mo>+</mo> <mi>b</mi><mi>x</mi>
+  <mo>+</mo> <mi>c</mi> <mo>=</mo> <mn>0</mn>
+</math> and they are
+<math mode="display">
+  <mi>x</mi> <mo>=</mo>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mo>&#x2212;</mo>
+        <mi>b</mi>
+        <mo>&#x00B1;</mo>
+        <msqrt>
+          <msup><mi>b</mi><mn>2</mn></msup>
+          <mo>&#x2212;</mo>
+          <mn>4</mn><mi>a</mi><mi>c</mi>
+        </msqrt>
+      </mrow>
+      <mrow> <mn>2</mn><mi>a</mi> </mrow>
+    </mfrac>
+  </mrow>
+  <mtext>.</mtext>
+</math>
+</body>
+</html>
