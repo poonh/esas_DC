@@ -2,15 +2,17 @@
 import os
 from os import *
 from sys import *
-import commands
+import shlex,subprocess
 import numpy as np
 from astropy.io import fits
 from spectrum_commands import spectrum_commands
 from spectrum_commands import *
 #write in notes: back obj have the same area and exposure
-mos1=commands.getoutput("head -1 log/prefix.log | gawk '{print $1}'")
-mos2=commands.getoutput("head -2 log/prefix.log | tail -1 | gawk '{print $1}'")
-pn=commands.getoutput("tail -1 log/prefix.log  | gawk '{print $1}'")
+
+
+mos1=subprocess.getoutput("head -1 log/prefix.log | gawk '{print $1}'")
+mos2=subprocess.getoutput("head -2 log/prefix.log | tail -1 | gawk '{print $1}'")
+pn=subprocess.getoutput("tail -1 log/prefix.log  | gawk '{print $1}'")
 
 ccd="mos2S002"
 a=spectrum_commands()
@@ -30,10 +32,10 @@ a.rateimg("full_spectrum_mos1/comb-obj-im-400-2300-mos1.fits","full_spectrum_mos
 a.rateimg("full_spectrum_pn/comb-obj-im-400-2300-pn.fits","full_spectrum_pn/comb-back-im-sky-400-2300-pn.fits","full_spectrum_pn/comb-exp-im-400-2300-pn.fits","full_spectrum_pn/pnS003-cheese.fits","comb_rate_pn.fits") #comb-obj-im-400-2300-pn.fits has already been corrected for oot, so you don't use rateimgpn here
 """
 ##################################################################
-
+"""
 #combine mos1,mos2 and pn, then search for the emission peak. The final products are combined counts, combined background img, combined exposure and combined rate image, namely,counts_comb.fits,back_comb.fits,expo_comb.fits,rate_comb.fits respectively
 #input counts,bkg and exposure images as a list
-"""
+
 a.imgcomb(["full_spectrum_mos1/comb-obj-im-400-2300-mos1.fits","full_spectrum_mos2/comb-obj-im-400-2300-mos2.fits","full_spectrum_pn/comb-obj-im-400-2300-pn.fits"],
           ["full_spectrum_mos1/comb-back-im-sky-400-2300-mos1.fits","full_spectrum_mos2/comb-back-im-sky-400-2300-mos2.fits","full_spectrum_pn/comb-back-im-sky-400-2300-pn.fits"],
           ["full_spectrum_mos1/comb-exp-im-400-2300-mos1.fits","full_spectrum_mos2/comb-exp-im-400-2300-mos2.fits","full_spectrum_pn/comb-exp-im-400-2300-pn.fits"],"comb.fits")
@@ -51,7 +53,7 @@ a.plotradial(["full_spectrum_mos1/comb-obj-im-400-2300-mos1.fits","full_spectrum
 a.plotradial(["full_spectrum_mos1/comb-obj-im-400-2300-mos1.fits","full_spectrum_mos2/comb-obj-im-400-2300-mos2.fits","full_spectrum_pn/comb-obj-im-400-2300-pn.fits"],
                ["full_spectrum_mos1/comb-back-im-sky-400-2300-mos1.fits","full_spectrum_mos2/comb-back-im-sky-400-2300-mos2.fits","full_spectrum_pn/comb-back-im-sky-400-2300-pn.fits"],
                 ["full_spectrum_mos1/mos1S001-cheese.fits","full_spectrum_mos2/mos2S002-cheese.fits","full_spectrum_pn/pnS003-cheese.fits"],
-                ["full_spectrum_mos1/comb-exp-im-400-2300-mos1.fits","comb-exp-im-400-2300-mos2.fits","comb-exp-im-400-2300-pn.fits"],xc=420,yc=430,rmax=12.,Nbin=18,constant="deg",outfile="spectrum_combexp_sb.png")
+                ["full_spectrum_mos1/comb-exp-im-400-2300-mos1.fits","full_spectrum_mos2/comb-exp-im-400-2300-mos2.fits","full_spectrum_pn/comb-exp-im-400-2300-pn.fits"],xc=420,yc=430,rmax=12.,Nbin=18,constant="deg",outfile="spectrum_combexp_sb.png")
 """
 ###################################################################
 
@@ -92,21 +94,22 @@ ccd="mos1S001"
 pitype="ff"   #fw,oc,ff,obj
 infilelist=["%s-1%s.pi"%(ccd,pitype),"%s-2%s.pi"%(ccd,pitype),"%s-4%s.pi"%(ccd,pitype),"%s-5%s.pi"%(ccd,pitype),"%s-7%s.pi"%(ccd,pitype)]
 inrmflist=["%s.rmf"%ccd,"%s.rmf"%ccd,"%s.rmf"%ccd,"%s.rmf"%ccd,"%s.rmf"%ccd]
-a.pltspec(infilelist,inrmflist,binning=20,outfile="mos1_ff_spec.png)
+a.pltspec(infilelist,inrmflist,binning=20,outfile="mos1_ff_spec.png")
 """
 
 ##########
 
-"""
+
 ##############compare the counts from mos2S002-back.pi in a certain energy range to that of the corresponding image;0.4=400eV (lower limit),2.3=2300eV(upper limit)
+"""
 a.backcounts("full_spectrum_mos1/mos1S001-back.pi","full_spectrum_mos1/mos1S001.rmf",0.4,2.3)
 a.totalcounts("full_spectrum_mos1/mos1S001-back-im-det-400-2300.fits")
 a.backcounts("full_spectrum_mos2/mos2S002-back.pi","full_spectrum_mos2/mos2S002.rmf",0.4,2.3)
 a.totalcounts("full_spectrum_mos2/mos2S002-back-im-det-400-2300.fits")
 a.backcountspn("full_spectrum_pn/pnS003-back.pi","full_spectrum_pn/pnS003.rmf",0.4,2.3)
 a.totalcounts("full_spectrum_pn/pnS003-back-im-det-400-2300.fits")
-"""
 
+"""
 ################
 
 
@@ -114,7 +117,5 @@ a.totalcounts("full_spectrum_pn/pnS003-back-im-det-400-2300.fits")
 
 #a.qdpplot("mos2-qpb.fits.gz",["2","3","4","6","7"]) #replot mos2S002-aug.qdp, input the qdp file of the calibration data and a list of the ccd chips you want, here ccd2,3,4,6,7
 
-
-#a.checkfullspec("mos2S002-obj.pi","mos2S002-back.pi") #output the rate and count and compare with full-pi
 
 

@@ -1,5 +1,5 @@
 import os,sys
-import commands
+import shlex,subprocess
 from astropy.io import fits
 from sys import *
 import math
@@ -18,24 +18,9 @@ def openspec(infile,inrmf,binsize):#
       elow=rmffile["E_MIN"]
       ehigh=rmffile["E_MAX"]
       emid=(elow+ehigh)/2.
-      """
-      if infile.find("pn")<0:
-         rmffile = fits.open(inrmf)[1].data
-         channel=specfile["CHANNEL"]
-         counts=specfile["COUNTS"]
-         elow=rmffile["ENERG_LO"]
-         ehigh=rmffile["ENERG_HI"]
-         emid=(elow+ehigh)/2.
-      else:
-      """
       subCounts = [counts[n:n+binsize] for n in range(0, len(counts), binsize)] 
       subCounts.append(np.concatenate((subCounts[-2],subCounts[-1]))) #combine the last two sublists together to make a new one, then remove these two sublists
-      subCounts=np.delete(subCounts,-3)
-      subCounts=np.delete(subCounts,-2)
       subEmid = [emid[n:n+binsize] for n in range(0, len(emid), binsize)]
-      subEmid.append(np.concatenate((subEmid[-2],subEmid[-1])))
-      subEmid=np.delete(subEmid,-3)
-      subEmid=np.delete(subEmid,-2)
       mean_counts,mean_ene=[],[]
       if binsize>1:
         for i in range(0,len(subCounts)-1):   #calculate the rate of the smoothed LC in units of counts per second
@@ -125,18 +110,18 @@ class spectrum_commands():
        highest=np.max(rateimg[flags])
        highest2=np.max(rateimg)
        yc=rateimg.argmax()/int(imgsize)
-       xc=rateimg.argmax()-yc*900
+       xc=rateimg.argmax()-yc*imgsize
        os.system("ecoordconv imageset=full_spectrum_mos1/comb-obj-im-400-2300-mos1.fits x=%s y=%s coordtype=impix > tmpcentermos1.txt"%(xc,yc))
        os.system("ecoordconv imageset=full_spectrum_mos2/comb-obj-im-400-2300-mos2.fits x=%s y=%s coordtype=impix> tmpcentermos2.txt"%(xc,yc))
        os.system("ecoordconv imageset=full_spectrum_pn/comb-obj-im-400-2300-pn.fits x=%s y=%s coordtype=impix> tmpcenterpn.txt"%(xc,yc))
-       mos1detx=str(commands.getoutput("gawk '/DETX: DETY: / {print $3}' tmpcentermos1.txt"))
-       mos1dety=str(commands.getoutput("gawk '/DETX: DETY: / {print $4}' tmpcentermos1.txt"))
-       mos2detx=str(commands.getoutput("gawk '/DETX: DETY: / {print $3}' tmpcentermos2.txt"))
-       mos2dety=str(commands.getoutput("gawk '/DETX: DETY: / {print $4}' tmpcentermos2.txt"))
-       pndetx=str(commands.getoutput("gawk '/DETX: DETY: / {print $3}' tmpcenterpn.txt"))
-       pndety=str(commands.getoutput("gawk '/DETX: DETY: / {print $4}' tmpcenterpn.txt"))
-       ra=str(commands.getoutput("gawk '/RA: DEC: / {print $3}' tmpcenterpn.txt"))
-       dec=str(commands.getoutput("gawk '/RA: DEC: / {print $4}' tmpcenterpn.txt"))
+       mos1detx=str(subprocess.getoutput("gawk '/DETX: DETY: / {print $3}' tmpcentermos1.txt"))
+       mos1dety=str(subprocess.getoutput("gawk '/DETX: DETY: / {print $4}' tmpcentermos1.txt"))
+       mos2detx=str(subprocess.getoutput("gawk '/DETX: DETY: / {print $3}' tmpcentermos2.txt"))
+       mos2dety=str(subprocess.getoutput("gawk '/DETX: DETY: / {print $4}' tmpcentermos2.txt"))
+       pndetx=str(subprocess.getoutput("gawk '/DETX: DETY: / {print $3}' tmpcenterpn.txt"))
+       pndety=str(subprocess.getoutput("gawk '/DETX: DETY: / {print $4}' tmpcenterpn.txt"))
+       ra=str(subprocess.getoutput("gawk '/RA: DEC: / {print $3}' tmpcenterpn.txt"))
+       dec=str(subprocess.getoutput("gawk '/RA: DEC: / {print $4}' tmpcenterpn.txt"))
        os.system('echo "ra,dec = %s %s" > %s'%(ra,dec,outfile))
        os.system('echo "xc,yc(pix in python) = %s %s" >> Centre.txt'%(xc,yc))
        os.system('echo "detx,dety(mos1) = %s %s" >> Centre.txt'%(mos1detx,mos1dety))
@@ -357,7 +342,7 @@ class spectrum_commands():
       for i in range(0,len(counts)):
           if i>=channel_low and i<=channel_high:
                total=total+counts[i] #int(counts[i]) for xspec
-      print "total counts in %s-%s: "%(Elow,Ehigh),total
+      print("total counts in %s-%s: "%(Elow,Ehigh),total)
 
    def backcountspn(self,infile,inrmf,Elow,Ehigh):#input pnS003-back.pi(infile) and the rmf to check the number of counts, Elow and Ehigh are the lower and upper energy limits in eV
       specfile = fits.open(infile)[1].data
@@ -378,12 +363,12 @@ class spectrum_commands():
       for i in range(0,len(counts)):
           if i>=channel_low and i<=channel_high:
                total=total+counts[i] #int(counts[i]) for xspec
-      print "total counts in %s-%s: "%(Elow,Ehigh),total*exposure
+      print("total counts in %s-%s: "%(Elow,Ehigh),total*exposure)
    
    def checkbkimg(self,ccd,ccdnum):#compare the total counts of mos2S002-back-im-det-400-2300.fits with the bkg img from fwc data,input mos1S001/mos2S002/pnS003 and the ccd chip numbers as a list("mos2S002",[1,2,3,4,5,6,7]). Put mos2S002-*obj.pi,mos2S002-im*-400-2300.fits and mos2S002-back-im-det-400-2300.fits in the folder you are running this. Check the file log/mos2_back.log
       back="%s-back-im-det-400-2300.fits"%ccd
-      backfile=fits.open(back)[0].data    
-      print("Total counts of %s"%back),": ",np.sum(backfile)
+      backfile=fits.open(back)[0].data
+      print("Total counts of %s"%back,": ",np.sum(backfile))
       for k in ccdnum:
            infile="%s-im%s-400-2300.fits"%(ccd,k)
            img=fits.open(infile)[0].data
@@ -399,8 +384,8 @@ class spectrum_commands():
                  if img[i][j]!=0:
                     pix=pix+1
                     count=count+img[i][j]        
-           print("Average non-zero value and total counts of %s"%infile),": ", count/float(pix),count
-           print("exposure ratio for observation/fwc of ccd%s"%k),": ", float(piexposure)/float(exposure)  
+           print("Average non-zero value and total counts of %s"%infile,": ", count/float(pix),count)
+           print("exposure ratio for observation/fwc of ccd%s"%k,": ", float(piexposure)/float(exposure))  
 
    def totalcounts(self,infile):
            img=fits.open(infile)[0].data
@@ -412,7 +397,7 @@ class spectrum_commands():
                  if img[i][j]!=0:
                     pix=pix+1
                     count=count+img[i][j]        
-           print("Total counts of image:"),count
+           print("Total counts of image:",count)
 
    def pltspec(self,infilelist,inrmflist,binning,outfile=None):
        color=["b","k","r","c","m","g","b","k","r","c","m","g","b","k","r","c","m","g"]
