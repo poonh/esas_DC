@@ -563,102 +563,14 @@ insert begins
 </i>
 </p>
 </br>
-<p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 12pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;"><i>pn-filter</i> and <i>mos-filter</i> use the unfiltered event lists produced from the previous step to create the final clean event list –<i> mos1S001-clean.fits</i>, <i>mos2S002-clean.fits</i>, <i>pnS003-clean.fits</i> and <i>pnS003-clean-oot.fits</i>. These files will be used for all subsequent analysis. For <i>mos1</i> and <i>mos2</i>, mos-filter also checks for anomalies of each ccd chip, i.e. ccd 2 to ccd 7, by comparing the lightcuves in high and low energies extracted from the corner, which does not contain any events from the FOV (hence, any anomalies would mean intrinsic).&nbsp;&nbsp;Some ccd chips have high counts and they have to be excluded from analysis, but their events are still in <i>mos1S001-clean.fits</i> and <i>mos2S002-clean.fits</i>.&nbsp;
+<p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 12pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;"><i>pn-filter</i> and <i>mos-filter</i> use the unfiltered event lists produced from the previous step to create the final clean event list –<i> mos1S001-clean.fits</i>, <i>mos2S002-clean.fits</i>, <i>pnS003-clean.fits</i> and <i>pnS003-clean-oot.fits</i>. These files will be used for all subsequent analysis. For <i>mos1</i> and <i>mos2</i>, mos-filter also checks for anomalies of each ccd chip, i.e. ccd 2 to ccd 7, by comparing the lightcuves in high and low energies extracted from the corner, which does not contain any events from the FOV (hence, any anomalies would mean intrinsic).&nbsp;&nbsp;Some ccd chips have high counts and they have to be excluded from analysis, but their events are still in <i>mos1S001-clean.fits</i> and <i>mos2S002-clean.fits</i>. What ccd chips are anomalous is written in the file <i>command.csh</i>, after you have run <i>mos-filter</i>. I will show you how this file is produced in the next chapter<a href="https://poonh.github.io/esas_DC/anol_ccd.html" target="_blank"> Anomalous CCD Check</a>.
 </span>
 <span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">
 <o:p>
 </o:p>
 </span>
 </p>
-<p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 12pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">&nbsp;
-</span>
-</p>
-<p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 12pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">When mos-filter is done, check command.csh. I renamed it to <i>mosproblemccd.txt</i> in <i>esas_products/</i>. Note if you use a different SAS version, a slightly different result would be produced. Open it and you see the following:
-</span>
-<span lang="EN-GB">
-<o:p>
-</o:p>
-</span>
-</p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 12pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">&nbsp;
-</span>
-</p>
-<p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 12pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">
-<o:p>
-</o:p>
-</span>
-</p>
-<p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 12pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">&nbsp;
-</span>
-</p>
-
-
-<p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 12pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="color: red; font-size: 12pt; line-height: 18.4px;">
-    <i>cat mos1S001-git.txt</i>
-    </br>
-    </br>
-<p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 12pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="color: black; font-size: 12pt; line-height: 18.4px;"><i>
-    # Limit=1.0 CCD=2 Hardness=4.472 Uncertainty=0.825
-    </br>
-    # Limit=1.0 CCD=3 Hardness=0.000 Uncertainty=0.000 ****
-
-      </br>
-      # Limit=3.4 CCD=4 Hardness=2.625 Uncertainty=0.630 ####
-        </br>
-	# Limit=3 CCD=5 Hardness=4.957 Uncertainty=0.801
-	  </br>
-	  # Limit=1.0 CCD=6 Hardness=0.000 Uncertainty=0.000 ****
-	    </br>
-	    # Limit=1.0 CCD=7 Hardness=6.846 Uncertainty=1.437
-	      </br>
-	      # Limit=1.0 CCD=2 Hardness=3.295 Uncertainty=0.482
-	        </br>
-		# Limit=1.0 CCD=3 Hardness=4.182 Uncertainty=0.810
-		  </br>
-		  # Limit=1.0 CCD=4 Hardness=4.795 Uncertainty=0.844
-		    </br>
-		    # Limit=3.5 CCD=5 Hardness=0.784 Uncertainty=0.073 ####
-		      </br>
-		      
-		      # Limit=1.0 CCD=6 Hardness=5.708 Uncertainty=1.263
-		        </br>
-			# Limit=1.0 CCD=7 Hardness=4.267 Uncertainty=0.707</i>
-			  </br>
-<o:p>
-</o:p>
-</span>
-</p>
-
-<p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 12pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="color: red; font-size: 12pt; line-height: 18.4px;">&nbsp;
-</span>
-</p>
-<p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 12pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">This is the hardness ratio ([2.5-5.0]/[0.5-0.8]) of the lightcuves of <i>mos1</i> and <i>mos2</i>. If the ratio is too low that means ccd chip anomalies are detected and that ccd has to be excluded in subsequent analysis. In this example, <i>mos1</i> ccd4 and <i>mos2</i> ccd5 are anomalous. <i>mos1</i> ccd3 and ccd6 are missing.&nbsp;
-<o:p>
-</o:p>
-</span>
-</p>
-<p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 12pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">You also find a file called <i>mos1S001-hist.qpd</i>. It is a diagnostic plot showing you the selection. I will soon show you how to produce it yourself.
-
-   </br>
-   </br>
-   Now in <i> src/sp_filter_script.py</i>, you do:
-   </br>
-   <span lang="EN-GB" style="color: black; font-size: 12pt; line-height: 18.4px;">
-       </br>
-<i>  a.write_ccd_anol("mosproblemccd.txt")</i>
-  </span>
-<o:p>
-</o:p>
-</br>
-</br>
-This rewrites the result from  <i>mosproblemccd.txt </i> to  <i>InputFiles/goodccdlist_mos1(mos2).txt </i>. The text files are shown in the terminal if they are produced successfully. For good ccd chips, I set the value = 1, otherwise 0. Note that for <i>mos1</i> ccd4, as we will see in  <a href="https://poonh.github.io/esas_DC/fovspecimage.html" target="_blank"> FOV Spectrum and Image</a>, it is actually not that anomalous, so I set value = 1. These two text files would be used for <i>mos-spectra</i> (the command for spectrum production). Note that  <i>mosproblemccd.txt </i> may be different for different SAS versions, and you may need to modify the code. 
-</br>
-</span>
-</p>
-
-
  
- 
-
 <p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 12pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">&nbsp;
     </br>
     Now let's check the products after filter. There is a diagnostic plot called <i>mos1S001-hist.qdp</i>. Let's open it:
