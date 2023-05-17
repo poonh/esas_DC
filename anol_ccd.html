@@ -227,7 +227,8 @@
                                 <div class="j-nav-variant-standard">
                                     <ul id="mainNav1" class="mainNav1">
                                         <li id="cc-nav-view-912164772">
-                                            <a href="https://poonh.github.io/esas_DC/" class="current level_1">
+                                          <a href="https://poonh.github.io/esas_DC/" class="current level_1">
+<!--index page begins-->
                                                 <span>HOME</span>
                                             </a>
                                         </li>
@@ -237,18 +238,38 @@
                                             </a>
                                         </li>
                                         <li id="cc-nav-view-912164772">
-                                            <a href="https://poonh.github.io/esas_DC/filter_SP.html" class="current level_1">
+                                            <a href="https://poonh.github.io/esas_DC/anol_ccd.html" class="current level_1">
                                                 <span>Anomalous CCD Check</span>
                                             </a>
                                         </li>
-                                       <li id="cc-nav-view-912164772">
+                                        <li id="cc-nav-view-912164772">
                                             <a href="https://poonh.github.io/esas_DC/cheese.html" class="current level_1">
                                                 <span>Masking Point Sources (Cheese)</span>
                                             </a>
                                         </li>
-                                        <li id="cc-nav-view-912164772">
+                                       <li id="cc-nav-view-912164772">
                                             <a href="https://poonh.github.io/esas_DC/fovspecimage.html" class="current level_1">
                                                 <span>FOV Spectrum and Image</span>
+                                            </a>
+                                       </li>
+                                       <li id="cc-nav-view-912164772">
+                                            <a href="https://poonh.github.io/esas_DC/residual_sp.html" class="current level_1">
+                                                <span>Checking for residual soft proton flares</span>
+                                            </a>
+                                       </li>
+                                       <li id="cc-nav-view-912164772">
+                                            <a href="https://poonh.github.io/esas_DC/swcx.html" class="current level_1">
+                                                <span>Checking for SWCX </span>
+                                            </a>
+                                       </li>
+                                       <li id="cc-nav-view-912164772">
+                                            <a href="https://poonh.github.io/esas_DC/EP_vs_EW.html" class="current level_1">
+                                                <span>Emission Peak vs. Emission-weighted Centre</span>
+                                            </a>
+                                       </li>
+                                       <li id="cc-nav-view-912164772">
+                                            <a href="https://poonh.github.io/esas_DC/spectral_fit.html" class="current level_1">
+                                                <span>Spectral Fit</span>
                                             </a>
                                         </li>	
 					
@@ -258,14 +279,14 @@
                                             </a>
                                         </li>
 					   <li id="cc-nav-view-912164772">
-                                            <a href="https://poonh.github.io/about_me.html" class="current level_1">
-                                                <span>About Me</span>
+                                            <a href="https://poonh.github.io/about_me.html" class="current level_1">                                                <span>About Me</span>
                                             </a>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
+<!--index page ends-->
                         <div id="cc-tp-nav-btm"></div>
                     </div>
 	
@@ -296,7 +317,8 @@
 
                             <div id="cc-matrix-1112072272">
                                 <div id="cc-m-4981642472" class="j-module n j-header ">
-                                    <h1 class="" id="cc-m-header-4981642472">Anomalous CCD Check</h1>
+                                    <h1 class="" id="cc-m-header-4981642472">Anomalous CCD Check
+</h1>
                                 </div>
                                 <div id="cc-m-4981638072" class="j-module n j-textWithImage ">
                                     <figure class="cc-imagewrapper cc-m-image-align-1">
@@ -306,27 +328,283 @@
                                     </figure>
                                     <div>
                                         <div id="cc-m-textwithimage-4981638072" data-name="text" data-action="text" class="cc-m-textwithimage-inline-rte">
-                                            <!-- 
-					    <p>
-                                                <span style="color: #000000;">
-                                                    <strong>Welcome to ESAS Deconstruction</strong>
-                                                </span>
-                                            </p>
-                                             --> 
 
 
 <!--
-===============================================================================================================================
+insert begins
+<!--
+insert begins
 -->
 
-<p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB">Remember mos-filter returns you a file which contains analomous ccd information. If is it still not overwritten,</span><span lang="EN-GB">&nbsp;it is command.csh, or you check esas_products/mosproblemccd.txt. Now we product this file manually from&nbsp;<o:p></o:p></span></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB">&nbsp;</span></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><i><span lang="EN-GB" style="color: red;">python bin/problem_ccd_check.py</span></i><i><span lang="EN-US" style="color: red;"><o:p></o:p></span></i></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB">&nbsp;</span></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">The input file for this is mos1S001-corn.fits, the clean event list from the corner, extracted from mos1S001-clean.fits. The corner events do not have anything from the FOV and reflect intrinsic anormalies of the ccds. If a ccd is normal, the (count rates in the high energy range/count rates in the low energy range) should have a certain ratio. If it is too low, that means the ccd exhibits higher-than-usual count rates and has to be discarded for further analysis. We will see this issue again when studying spectrum.&nbsp;<o:p></o:p></span></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">&nbsp;</span></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">Now we extract two filtered event list in each corner in the following ranges:<o:p></o:p></span></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">&nbsp;</span></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">[0.5 – 0.8] keV<o:p></o:p></span></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">[2.5 – 5.0] keV&nbsp;<o:p></o:p></span></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">&nbsp;</span></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">These ranges can be slightly different in reality.&nbsp;<o:p></o:p></span></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">And 12 lists would be produced, 2 for each ccd. Remember we do ccd 2-7, 1 is not included. The product names are mos1S001_Xccd_0.5_0.8.fits and mos1S001_Xccd_0.5_0.8.fits, X stands for the ccd number.&nbsp;<o:p></o:p></span></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">Here is the command for extracting the filtered event list:<o:p></o:p></span></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">&nbsp;</span></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><i><span lang="EN-GB" style="color: red; font-size: 12pt; line-height: 18.4px;">evselect table=mos1S001-corn.fits withfilteredset=yes expression='</span><span lang="EN-GB" style="color: red;">&nbsp;</span></i><i><span lang="EN-GB" style="color: red; font-size: 12pt; line-height: 18.4px;">(PATTERN&lt;=12)&amp;&amp;!((DETX,DETY) in BOX(10167,13005,3011,6575,0))&amp;&amp;(((FLAG &amp; 0x766a0f63)==0)||((FLAG &amp; 0x766a0763) == 0))&amp;&amp;(</span></i><i><span lang="EN-GB" style="color: #0070c0; font-size: 12pt; line-height: 18.4px;">CCDNR==7</span></i><i><span lang="EN-GB" style="color: red; font-size: 12pt; line-height: 18.4px;">)&amp;&amp;(</span></i><i><span lang="EN-GB" style="color: #0070c0; font-size: 12pt; line-height: 18.4px;">PI in [2500.0:5000.0])&nbsp;</span></i><i><span lang="EN-GB" style="color: red; font-size: 12pt; line-height: 18.4px;">' filtertype=expression filteredset=</span></i><i><span lang="EN-GB" style="color: #0070c0; font-size: 12pt; line-height: 18.4px;">mos1S001_7ccd_2.5_5.0.fits</span></i><i><span lang="EN-GB" style="color: red; font-size: 12pt; line-height: 18.4px;"><o:p></o:p></span></i></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><i><span lang="EN-GB" style="color: red; font-size: 12pt; line-height: 18.4px;">&nbsp;</span></i></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">This example is mos1 ccd7. Just change CCDNR, PI, and filteredset for a different ccd, energy range and filtered event list name.<o:p></o:p></span></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">&nbsp;</span></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">After you produce all filtered event list, you just count the number of events in each list and do the hardness ratio. Of course, you can do it by hand, for mos1S001_2ccd_0.5_0.8.fits and mos1S001_2ccd_2.5_5.0.fits,<o:p></o:p></span></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><i><span lang="EN-GB" style="color: red; font-size: 12pt; line-height: 18.4px;">&nbsp;</span></i></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><i><span lang="EN-GB" style="color: red; font-size: 12pt; line-height: 18.4px;">&gt;fv mos1S001_2ccd_0.5_0.8.fits<o:p></o:p></span></i></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><i><span lang="EN-GB" style="color: red; font-size: 12pt; line-height: 18.4px;">&gt;fv mos1S001_2ccd_2.5_5.0.fits<o:p></o:p></span></i></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><i><span lang="EN-GB" style="color: red; font-size: 12pt; line-height: 18.4px;">&nbsp;</span></i></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">For the extension EVENTS, the cols is the name of each quantity and rows indicate the number of events. It is 36 rows and 161 rows for the low and high energy file, so the hardness ratio is 161/36 = 4.472 for mos1 ccd2. If you check esas_products/</span><span lang="EN-GB">&nbsp;</span><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">mosproblemccd.txt, you find the same value.&nbsp;<o:p></o:p></span></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">&nbsp;</span></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">If you run the program successfully, the result is in the terminal and written in mos1S001_problemccd.txt.<o:p></o:p></span></p><p class="MsoNormal" style="font-family: Arial, sans-serif; font-size: 11pt; line-height: 16.866667px; margin: 0cm;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">&nbsp;</span></p>
 
 
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: right;">
+</br>
 
-					    
+</br>
+ <div style="text-align: right;">
+</br>
+Last Updated:2023/05/17
+</div>
+</align right>
+</br>
 
+</br>
+Source: MCXC J0106.8+0103
+</br>
+Observation ID: 0762870601  
+</br>
+SAS Version: 19.0.0
+</br>
+Python version: 3
+</br>
+csh is used
+</br>
+
+</br>
+In this chapter, I am going to show you how to determine whether a ccd chip is anomalous. Everything you need is the file from the previous chapter,
+<a href="https://poonh.github.io/esas_DC/filter_SP.zip" class="current level_1" target="_blank">
+</br>
+filter_sp.zip
+</a>.
+</br>
+
+</br>
+Remember right after running <i>mos-filter</i>, you get a file called <i>command.csh</i>, which contains anomalous ccd chip information. I renamed it to <i>esas_products/mosproblemccd.txt</i>. Open it and you see the following:
+</br>
+
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red">
+<red>
+</br>
+<i>cat mosproblemccd.txt</i>
+</span>
+</red>
+</br>
+
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:black">
+<black>
+</br>
+<i># Limit=1.0 CCD=2 Hardness=4.472 Uncertainty=0.825 
+</br>
+# Limit=1.0 CCD=3 Hardness=0.000 Uncertainty=0.000 **** 
+</br>
+# Limit=3.4 CCD=4 Hardness=2.625 Uncertainty=0.630 #### 
+</br>
+# Limit=3 CCD=5 Hardness=4.957 Uncertainty=0.801 
+</br>
+# Limit=1.0 CCD=6 Hardness=0.000 Uncertainty=0.000 **** 
+</br>
+# Limit=1.0 CCD=7 Hardness=6.846 Uncertainty=1.437 
+</br>
+# Limit=1.0 CCD=2 Hardness=3.295 Uncertainty=0.482 
+</br>
+# Limit=1.0 CCD=3 Hardness=4.182 Uncertainty=0.810 
+</br>
+# Limit=1.0 CCD=4 Hardness=4.795 Uncertainty=0.844 
+</br>
+# Limit=3.5 CCD=5 Hardness=0.784 Uncertainty=0.073 #### 
+</br>
+# Limit=1.0 CCD=6 Hardness=5.708 Uncertainty=1.263 
+</br>
+# Limit=1.0 CCD=7 Hardness=4.267 Uncertainty=0.707</i>
+</span>
+</black>
+</br>
+
+</br>
+This is the hardness ratio ([2.5-5.0]/[0.5-0.8]) of the lightcuves of <i>mos1</i> and <i>mos2</i>. If the ratio is too low that means ccd chip anomalies are detected and that ccd chip has to be excluded in subsequent analysis. In this example, <i>mos1</i> ccd4 and <i>mos2</i> ccd5 are anomalous. <i>mos1</i> ccd3 and ccd6 are missing. We will check further to confirm ccd anomalies.
+</br>
+
+</br>
+To reproduce the above file, in <i>src/filter_sp_script.py</i>:
+</br>
+
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:black">
+<black>
+</br>
+  <i>a.problemccdcheck() #parameters omitted</i>
+</span>
+</black>
+</br>
+
+</br>
+Choose the ccd you want(<i>mos1S001</i> or <i>mos2S002</i>), and you see the following on the screen, a file called <i>mos2S002_problemccd.txt</i> is also written:
+</br>
+
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:black">
+<black>
+</br>
+ <i>mos2S002
+</br>
+ ccd&nbsp;  || total&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|| total&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|| hardness
+</br>
+ chip || events(LE) || events(HE) || ratio
+</br>
+=============================================
+</br>
+2 61 201 3.3
+</br>
+3 33 138 4.18
+</br>
+4 39 187 4.79
+</br>
+5 264 207 0.784
+</br>
+6 24 137 5.71
+</br>
+7 45 192 4.27</i>
+</span>
+</black>
+</br>
+
+</br>
+The input file for this is <i>mos1S001-corn.fits</i>, the event list which contains corner events only, extracted from <i>mos1S001-clean.fits</i>. The corner events do not have anything from the FOV and reflect intrinsic anormalies of the ccd chips. If a ccd chip(1st column) is normal, the [counts in the high energy range (2nd column)]/([counts in the low energy range (3rd column)] should have a certain ratio (4th column). If it is too low, that means the ccd chip exhibits higher-than-usual counts in the low energy range and has to be discarded for further analysis. We will see this issue again in
+<a href="https://poonh.github.io/esas_DC/fovspecimage.html" class="current level_1" target="_blank">
+</br>
+FOV spectrum and image
+</a>.
+</br>
+
+</br>
+The program extracts two event lists for ccd chip 2-7, one in [0.5 – 0.8] keV and the other [2.5 – 5.0] keV. The hardness ratio is the ratio of the number of events in the lists. The product names produced by the script are <i>mos2S002_Xccd_0.5_0.8.fits</i> and <i>mos2S002_Xccd_0.5_0.8.fits</i>, X stands for the ccd chip number.
+</br>
+
+</br>
+Now let's extract ccd chip 7 of <i>mos2S002</i> manually. For the following, just change <i>CCDNR</i>, <i>PI</i>, and <i>filteredset</i> for a different ccd, energy range and filtered event list name, respectively.
+</br>
+
+</br>
+
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red">
+  <i>evselect table=mos2S002-corn.fits withfilteredset=yes expression=' (PATTERN<=12)&&((FLAG & 0x766a0763) == 0)&&
+</span>
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:blue"> (CCDNR==7)</span>
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red"> &&</span>
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:blue">(PI in [2500:5000])</span>
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red"> ' filtertype=expression </span>
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:blue">filteredset=mos2S002_7ccd_2.5_5.0.fits</i></span>
+</br>
+  
+</br>
+
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red">
+  <i>evselect table=mos2S002-corn.fits withfilteredset=yes expression=' (PATTERN<=12)&&((FLAG & 0x766a0763) == 0)&&
+</span>
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:blue"> (CCDNR==7)</span>
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red"> &&</span>
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:blue">(PI in [500:800])</span>
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red"> ' filtertype=expression </span>
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:blue">filteredset=mos2S002_7ccd_0.5_0.8.fits</i></span>
+
+
+</br>
+ 
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left">
+</br>
+Now open the two newly produced files and check for the number of events (i.e. number of rows) for the extension <i>EVENTS</i>:
+</br>
+ 
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red">
+<red>
+</br>
+<i>fv mos2S002_7ccd_0.5_0.8.fits &
+</br>
+fv mos2S002_7ccd_2.5_5.0.fits &</i> 
+</span>
+</red>
+</br>
+ 
+</br>
+For the low energy file, it has 45 rows while the high energy one has 192 rows, so the hardness ratio is 192/45 = 4.27 for <i>mos2</i> ccd7. If you check <i>esas_products/mosproblemccd.txt</i>, you find the same value. A ccd chip with a low hardness ratio means it has higher-than-usual counts in the low energy range. You can see this both in the spectrum and also image. Now let's take a look at the image:
+</br>
+
+</br>
+In <i>src/sp_filter_script.py</i>, you do the following to extract the corner images in both energy ranges: 
+</br>
+
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:black">
+<black>
+</br>
+  <i> a.CornImage() #parameters omitted </i>
+</span>
+</black>
+</br>
+
+</br>
+The files produced are <i>mos2S002-corn-image-0.5-0.8.fits</i> and <i>mos2S002-corn-image-2.5-5.0.fits</i>. Here are how they look:
+</br>
+
+<a href="a href="https://poonh.github.io/esas_DC/figs/anol_ccd_check_mos2S002-corn-image-0.5-0.8.png" class="current level_1" target="_blank"" class="current level_1" target="_blank">
+<img border="0" data-original-height="480" data-original-width="640" height="533" width="533" src="https://poonh.github.io/esas_DC/figs/anol_ccd_check_mos2S002-corn-image-0.5-0.8.png"></a>
+</br>
+
+</br>
+
+<a href="a href="https://poonh.github.io/esas_DC/figs/anol_ccd_check_mos2S002-corn-image-2.5-5.0.png" class="current level_1" target="_blank"" class="current level_1" target="_blank">
+<img border="0" data-original-height="480" data-original-width="640" height="533" width="533" src="https://poonh.github.io/esas_DC/figs/anol_ccd_check_mos2S002-corn-image-2.5-5.0.png"></a></br>
+
+</br>
+ <div style="text-align: center;">
+</br>
+Fig.1 Top panel: <i>mos2S002-corn-image-0.5-0.8.fits</i>. Bottom panel: <i>mos2S002-corn-image-2.5-5.0.fits</i>. Top left is chip 5.
+</div>
+</align>
+</br>
+
+</br>
+You see for <i>mos2S002-corn-image-0.5-0.8.fits</i>,chip 5 (top left) obviously have higher counts than other ccd chips but not <i>mos2S002-corn-image-2.5-5.0.fits</i>.
+</br>
+
+</br>
+<i>mos1</i> corner images:
+</br>
+
+<a href="a href="https://poonh.github.io/esas_DC/figs/anol_ccd_check_mos1S001-corn-image-0.5-0.8.png" class="current level_1" target="_blank"" class="current level_1" target="_blank">
+<img border="0" data-original-height="480" data-original-width="640" height="533" width="533" src="https://poonh.github.io/esas_DC/figs/anol_ccd_check_mos1S001-corn-image-0.5-0.8.png"></a>
+</br>
+
+</br>
+
+<a href="a href="https://poonh.github.io/esas_DC/figs/anol_ccd_check_mos1S001-corn-image-2.5-5.0.png" class="current level_1" target="_blank"" class="current level_1" target="_blank">
+<img border="0" data-original-height="480" data-original-width="640" height="533" width="533" src="https://poonh.github.io/esas_DC/figs/anol_ccd_check_mos1S001-corn-image-2.5-5.0.png"></a></br>
+
+</br>
+ <div style="text-align: center;">
+</br>
+Fig.2 Top panel: <i>mos1S001-corn-image-0.5-0.8.fits</i>. Bottom panel: <i>mos1S001-corn-image-2.5-5.0.fits</i>. Top right is chip 4.
+</div>
+</align>
+</br>
+
+</br>
+Here for <i>mos1S001-corn-image-0.5-0.8.fits</i>, chip 4 (top right) does not show higher counts than other ccd chips. I will keep it.
+</br>
+
+</br>
+Finally, we need to extract the result and write it to <i>InputFiles/goodccdlist_mos1(mos2).txt</i>, which will be used in
+<a href="https://poonh.github.io/esas_DC/fovspecimage.html" class="current level_1" target="_blank">
+</br>
+FOV spectrum and image
+</a>.
+</br>
+
+</br>
+Now in <i>src/sp_filter_script.py</i>, you do: 
+</br>
+
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red">
+<red>
+</br>
+<i> a.write_ccd_anol("mosproblemccd.txt")</i>
+</span>
+</red>
+</br>
+
+</br>
+This rewrites the result from <i>mosproblemccd.txt</i> to <i>InputFiles/goodccdlist_mos1(mos2).txt</i>. The text files are shown in the terminal if they are produced successfully. For good ccd chips, I set the value = 1, otherwise 0. I manually set <i>mos1</i> ccd4 as 1. These two text files would be used for <i>mos-spectra</i> (the command for spectrum production). Note that <i>mosproblemccd.txt</i> may be different for different SAS versions, and you may need to modify the code. 
+</span>
 <!--
-===============================================================================================================================
+insert ends
 -->
 
 					    
