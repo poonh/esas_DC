@@ -343,18 +343,197 @@ insert begins
 
 
 
-<!--
--->
-
-
-
 <span style="font-family: arial; sans-serif; font-size: 12pt; text-align: right;">
 </br>
 
 </br>
-To be finished ...
+ <div style="text-align: right;">
+</br>
+Last Updated:2023/05/22
+</div>
+</align right>
+</br>
+
+</br>
+You can skip this part if you are familiar with emission-weighted centre.
+</br>
+
+</br>
+Here are what I use for this tutorial:
+</br>
+</br>
+Source: MCXC J0106.8+0103
+</br>
+Observation ID: 0762870601  
+</br>
+SAS Version: 19.0.0
+</br>
+Python version: 3
+</br>
+csh is used
+</br>
+
+</br>
+I provide two scripts and simulated clusters in
+<a href="https://poonh.github.io/esas_DC/EP_vs_EW.zip" class="current level_1" target="_blank">
+  EP_vs_EW.zip
+</a>
+.
+</br>
+</br>
+In the folder <i>src</i>, one script is for generating simulated clusters, the other for calculating emission peak and emission-weighted centre. Note that the script cannot be used for calculating the emission-weighted centre of real data since masks are not accounted for. You can test by simulating clusters yourself and calculating the centres. If you want to calculate the emission-weighted centre of real data, you can use
+<a href="https://pyproffit.readthedocs.io/en/latest/" class="current level_1" target="_blank">
+<i>pyproffit</i>
+</a>.
+</br>
+
+</br>
+Before we move on to spectral fit, we first have to decide the cluster centre. There are two choices:
+</br>
+1) emission peak
+</br>
+2) emission-weighted centre
+</br>
+
+</br>
+For emission peak, it is just the pixel with highest rate. For the emission-weighted centre, it is calculated this way:
+</br>
+</br>
+<span style="font-size: 14pt; align:center">
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow>
+    <mi>c</mi>
+    <mi>e</mi>
+    <mi>n</mi>
+    <mi>t</mi>
+    <mi>r</mi>
+    <mi>e</mi>
+    <mo>=</mo>
+    <mrow>
+      <mo stretchy="true" form="prefix">(</mo>
+      <mfrac>
+        <mn>1</mn>
+        <mi>N</mi>
+      </mfrac>
+      <munder>
+        <mo>∑</mo>
+        <mi>i</mi>
+      </munder>
+      <mrow>
+        <msub>
+          <mi>n</mi>
+          <mi>i</mi>
+        </msub>
+        <msub>
+          <mi>x</mi>
+          <mi>i</mi>
+        </msub>
+      </mrow>
+      <mo>,</mo>
+            <mo></mo>
+      <mfrac>
+        <mn>1</mn>
+        <mi>N</mi>
+      </mfrac>
+      <munder>
+        <mo>∑</mo>
+        <mi>i</mi>
+      </munder>
+      <mrow>
+        <msub>
+          <mi>n</mi>
+          <mi>i</mi>
+        </msub>
+        <msub>
+          <mi>y</mi>
+          <mi>i</mi>
+        </msub>
+      </mrow>
+      <mo stretchy="true" form="postfix">)</mo>
+    </mrow>
+  </mrow>
+</math>
+
 </span>
-<!--
+</br>
+</br>
+
+where
+<span style="font-size: 14pt; align:center">
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow>
+    <mi>N</mi>
+    <mo>=</mo>
+    <munder>
+      <mo>∑</mo>
+      <mi>i</mi>
+    </munder>
+    <msub>
+      <mi>n</mi>
+      <mi>i</mi>
+    </msub>
+  </mrow>
+</math>
+</span>
+
+</br>
+The above equation is cited from 
+<a href="https://ui.adsabs.harvard.edu/abs/1994AAS...18511902M/abstract" class="current level_1" target="_blank">
+Mohr et al (1994)(Cosmological Constraints from Cluster X-ray Morphologies)
+</a>.
+</br>
+
+</br>
+I simulated two clusters (already found in the downloadable file), one with beta model (left of Fig.1), the other one(right of Fig.1) with a linear model. The rate gets larger towards outer radius for the later. For the beta-model cluster in the left, both centres are in the central position of the image. For the linear-model cluster in the right, clearly the emssion peak is in the corners but the emission-weighted centre is the central position where the rate is 0.
+</br>
+</br>
+<a href="https://poonh.github.io/esas_DC/figs/EP_EWC.png" class="current level_1" target="_blank">
+<img border="0" height="300.0" width="550" src="https://poonh.github.io/esas_DC/figs/EP_EWC.png"></a>
+</br>
+Fig. 1: Left is a cluster generated with a beta model. Right is generated with a linear model with outer radii having a larger rate. For both clusters, the emission peaks are different but the emission-weighted centres are the same.
+</br>
+
+</br>
+For relaxed clusters, the emission-weighted centre and the emission peak overlap but not disturbed clusters. There is not really a "correct" choice about which centre you should use. It mainly depends on what you want to do. If you are working on global properties like r<sub>500</sub> temperature, luminosity ...etc, then it is expected that radial properties are more symmetric with respect to emission-weighted centre than emission peak. The emission peak marks the point of maximum potential well. So, if you are working on central properties like cooling time, the emission peak may be preferred.
+</br>
+
+</br>
+Here are some examples of previous papers working on scaling relations (global properties). You may want to check them to understand better what you should use:
+</br>
+
+<a href="https://ui.adsabs.harvard.edu/abs/2023MNRAS.520.6001P/abstract" class="current level_1" target="_blank">
+</br>
+Poon et al(2023)
+</a>
+Scaling relations of X-ray luminous clusters in the Hyper Suprime-Cam Subaru Strategic Program field :
+</br>
+emission-weighted centre
+</br>
+<a href="https://ui.adsabs.harvard.edu/abs/2020ApJ...892..102L" class="current level_1" target="_blank">
+</br>
+Lovisari et al (2020)
+</a>
+X-Ray Scaling Relations for a Representative Sample of Planck-selected Clusters Observed with XMM-Newton:
+</br>
+emission peak
+
+</br>
+<a href="https://ui.adsabs.harvard.edu/abs/2015A%26A...573A.118L/abstract" class="current level_1" target="_blank">
+</br>
+Lovisari et al (2015) 
+</a>
+Scaling properties of a complete X-ray selected galaxy group sample,Section 3.1:
+</br>emission-weighted centre
+<a href="https://ui.adsabs.harvard.edu/abs/2009ApJ...692.1033V/abstract" class="current level_1" target="_blank">
+</br>
+</br>
+Viklinin et al (2009)
+</a>
+Chandra Cluster Cosmology Project. II. Samples and X-Ray Data Reduction, p1039:
+</br>emission peak for relaxed clusters, emission-weighted centre for disturbed clusters
+</br>
+
+</span>
 <!--
 insert ends
 -->
