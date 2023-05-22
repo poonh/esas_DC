@@ -109,7 +109,7 @@ class spectrum_commands():
        flags=np.all(sel,axis=0); #number of pixels in that annulus
        highest=np.max(rateimg[flags])
        highest2=np.max(rateimg)
-       yc=rateimg.argmax()/int(imgsize)
+       yc=int(rateimg.argmax()/int(imgsize))
        xc=rateimg.argmax()-yc*imgsize
        os.system("ecoordconv imageset=full_spectrum_mos1/comb-obj-im-400-2300-mos1.fits x=%s y=%s coordtype=impix > tmpcentermos1.txt"%(xc,yc))
        os.system("ecoordconv imageset=full_spectrum_mos2/comb-obj-im-400-2300-mos2.fits x=%s y=%s coordtype=impix> tmpcentermos2.txt"%(xc,yc))
