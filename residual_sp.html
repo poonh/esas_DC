@@ -343,21 +343,336 @@ insert begins
 
 
 
-<!--
--->
-
-
-
 <span style="font-family: arial; sans-serif; font-size: 12pt; text-align: right;">
 </br>
 
 </br>
-To be finished ...
+ <div style="text-align: right;">
+</br>
+Last Updated:2023/06/09
+</div>
+</align right>
+</br>
+
+</br>
+To better understand this part, I recommend reading this paper first
+<a href="https://ui.adsabs.harvard.edu/abs/2004A%26A...419..837D/abstract" class="current level_1" target="_blank">
+</br>
+The 2-8 keV cosmic X-ray background spectrum as observed with XMM-Newton (De Luca & Molendi 2004)
+</a>. In this chapter, I am going to introduce the scripts to check for soft proton flares from the official <i>XMM-Newton</i> website and by me. 
+</br>
+
+</br>
+Here are what I use for this tutorial:
+</br>
+
+</br>
+Source: MCXC J0106.8+0103 and A0267 (flaring source)
+</br>
+Observation ID: 0762870601 and 0084230401
+</br>
+SAS Version: 19.0.0
+</br>
+Python version: 3
+</br>
+csh is used
+</br>
+
+</br>
+Everything you need in this tutorial is in:
+<a href="https://poonh.github.io/esas_DC/residual_sp.zip" class="current level_1" target="_blank">
+residual_sp.zip 
+</a>.
+</br>
+
+</br>
+The products are for MCXC J0106.8+0103 only!
+</br>
+
+</br>
+You work in the main folder <i>residual_sp</i>, there are several subfolders:
+</br>
+1. src - the source code is found here.
+</br>
+2. InputFiles - the folder in which the good ccd lists for <i>mos1(goodccdlist_mos1.dat)</i> and <i>mos2(goodccdlist_mos2.dat)</i> are put. This is created in
+<a href="https://poonh.github.io/esas_DC/anol_ccd.html" class="current level_1" target="_blank">
+  Anomalous CCD Check
+</a>.
+</br>
+3. products - the files here are created in this tutorial. They are put in the main folder if you create them successfully.
+</br>
+
+</br>
+If you have already finished the last chapter and keep everything well. Then, you just need to copy the scripts in <i>src</i> to your current <i>src</i> folder. 
+</br>
+
+</br>
+Here are what you need in the main folder <i>residual_sp</i>. You should have them already if you follow the steps in the previous chapters. I am not uploading them since they are too big:
+</br>
+1. the "clean" files:  <i>mos1S001-clean.fits</i>, <i>mos2S002-clean.fits</i> and <i>pnS003-clean.fits</i>
+</br>
+2. the corner files:  <i>mos1S001-corn.fits</i>, <i>mos2S002-corn.fits</i> and <i>pnS003-corn.fits</i>. You can produce them from the "clean" files if you don't have them. Just check the commands in
+<a href="https://poonh.github.io/esas_DC/fovspecimage.html" class="current level_1" target="_blank">
+FOV Spectrum and Image
+</a>.
+</br>
+3. The combined exposure: <i>comb-exp-im-400-2300-mos1.fits</i>, <i>comb-exp-im-400-2300-mos2.fits</i> and <i>comb-exp-im-400-2300-pn.fits</i>. Again they are the products from
+<a href="https://poonh.github.io/esas_DC/fovspecimage.html" class="current level_1" target="_blank">
+FOV Spectrum and Image
+</a>.
+</br>
+4. The folders <i>full_spectrum_mos1</i>, <i>full_spectrum_mos2</i> and <i>full_spectrum_pn</i>. They are again created in
+<a href="https://poonh.github.io/esas_DC/fovspecimage.html" class="current level_1" target="_blank">
+FOV Spectrum and Image
+</a>.
+</br>
+5. <i>mos1S001-obj-image-sky.fits</i>,<i>mos2S002-obj-image-sky.fits</i> and <i>pnS003-obj-image-sky.fits</i>. These are images in sky coordinate created in
+<a href="https://poonh.github.io/esas_DC/filter_SP.html" class="current level_1" target="_blank">
+</br>
+Filtering for Soft Protons
+</a>. If you don't have them, just look up the commands in that chapter or produce an image in sky coordinate yourself. Then, remember to modify the code in <i>SB()</i> of <i>src/residual_sp_commands.py</i>. These images are used for coordinate conversion using <i>ecoordconv</i>.
+</br>
+
+</br>
+We already check for soft proton flares in
+<a href="https://poonh.github.io/esas_DC/filter_SP.html" class="current level_1" target="_blank">
+Filtering for Soft Protons
+</a>. Let me remind you, we extract the lightcurves and plot a histogram of the count rate to filter out events of high counts, right? See Fig. 1 below for MCXC J0106.8+0103. This source is not contaminated by soft proton flares and indeed it is not.
+</br>
+
+</br>
+
+<a href="https://poonh.github.io/esas_DC/figs/spfilter_mos1S001-hist.png" class="current level_1" target="_blank">
+<img border="0" height="550.0" width="547.5336322869955" src="https://poonh.github.io/esas_DC/figs/spfilter_mos1S001-hist.png"></a>
+</br>
+Fig.1 Diagnostic plots of <i>mos-filter</i> for the source MCXC J0106.8+0103. This source is not contaminated by soft proton flares.
+</br>
+
+</br>
+Wait, it is not enough. Soft proton flares with slow time variability and low amplitudes cannot be detected in such a plot. Here is one example (A0267):
+</br>
+
+</br>
+
+<a href="https://poonh.github.io/esas_DC/figs/residual_sp_mos1_qdp.png" class="current level_1" target="_blank">
+<img border="0" height="550.0" width="547.5336322869955" src="https://poonh.github.io/esas_DC/figs/residual_sp_mos1_qdp.png"></a>
+<a href="https://poonh.github.io/esas_DC/figs/residual_sp_mos2_qdp.png" class="current level_1" target="_blank">
+<img border="0" height="550.0" width="547.5336322869955" src="https://poonh.github.io/esas_DC/figs/residual_sp_mos2_qdp.png"></a>
+<a href="https://poonh.github.io/esas_DC/figs/residual_sp_pn_qdp.png" class="current level_1" target="_blank">
+<img border="0" height="550.0" width="547.5336322869955" src="https://poonh.github.io/esas_DC/figs/residual_sp_pn_qdp.png"></a>
+</br>
+Fig.2 Diagnostic plots of <i>mos-filter</i> and <i>pn-filter</i> for the source A0267. Top: <i>mos1</i>, middle:<i>mos2</i>, botton:<i>pn</i>. Note that <i>pn</i> observations started an hour later than <i>mos</i>.
+</br>
+
+</br>
+This source is actually very contaminated for <i>mos1</i> and <i>mos2</i>. According to
+<a href="https://ui.adsabs.harvard.edu/abs/2004A%26A...419..837D/abstract" class="current level_1" target="_blank">
+</br>
+De Luca & Molendi 2004
+</a>, to check for soft-proton flares, compare the <i>IN</i> and <i>OUT FOV</i> surface brightness in the high energies (e.g. 8-12 keV). A ratio > 1.3 is considered very contaminated and may not be suitable for data analysis. In the high energy regime, only the quiescent particle background, unresolved X-ray sources and soft protons flares are found for areas far away from the source (most cosmic X-ray background are of low energies,  more details in
+<a href="https://poonh.github.io/esas_DC/spectral_fit.html" class="current level_1" target="_blank">
+Spectral fit
+</a>
+
+). For the <i>OUT FOV</i> (i.e. corner), there is only quiescent particle background which is of non-cosmic origin. Thus, a comparison of the <i>IN</i> and <i>OUT FOV</i> would tell whether soft proton flares exist. If the flares are strong enough, they manifest themselves in te image. In the left panel of Fig.3, I created an image of photon counts in 6-12 keV of <i>mos2</i> but I found the flares not noticeable (ratio=1.8), so I created another image using the whole observation time. Now in the right panel, the soft proton flares are obvious compared to the corner(ratio=3.8). You may want to click on the image to enlarge it to see clearly.
+</br>
+
+<a href="https://poonh.github.io/esas_DC/figs/residual_sp_A0267_mos2.png" class="current level_1" target="_blank">
+<img border="0" height="260.0" width="547.5336322869955" src="https://poonh.github.io/esas_DC/figs/residual_sp_A0267_mos2.png"></a>
+</br>
+Fig.3 Left: Photon counts image of <i>mos2</i> of A0267 after <i>mos-filter</i> in 6-12 keV. Soft proton flares exist but not apparent compared to the corner. Right: the same criteria using dataset before <i>mos-filter</i>. Soft proton flares are prominent now.
+</br>
+
+</br>
+(In case you want to try yourself, here is how the image including corners are extracted:
+</br>
+
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red">
+  <red><i>
+      </br>
+evselect table=mos2S002-clean.fits:EVENTS withfilteredset=yes expression='(PATTERN<=12) && region(mos2S002-bkg_region-det.fits)&&(PI in [6000:12000])' filtertype=expression imagebinning='imageSize' imagedatatype='Int32' imageset=mos2S002-obj-im-6-12keV.fits squarepixels=yes ignorelegallimits=yes withxranges=yes withyranges=yes xcolumn='DETX' ximagesize=780 ximagemax=19500 ximagemin=-19499 ycolumn='DETY' yimagesize=780 yimagemax=19500 yimagemin=-19499 updateexposure=yes filterexposure=yes
 </span>
-<!--
-<!--
-insert ends
--->
+ </i></red>
+</br>
+
+</br>
+For the image including the full observation time, go back to 
+<a href="https://poonh.github.io/esas_DC/filter_SP.html" class="current level_1" target="_blank">
+</br>
+Filtering for Soft Protons
+</a>, look up the part of gti files, then make <i>mos2S002-clean.fits</i> again.)
+</br>
+
+</br>
+
+<span style="font-family: arial; sans-serif; font-size: 14pt; color:black;">
+<b><i>Official Script</b></i>
+</span>
+</br>
+
+</br>
+To check for residual proton flares, there is a ready-made script available at
+<a href="https://www.cosmos.esa.int/web/xmm-newton/epic-scripts" class="current level_1" target="_blank">
+</br>
+ <i>XMM-Newton</i>
+</a>
+</br>
+
+</br>
+Here is the idea of the script:
+</br>
+1. Extract the i--IN FOV--i spectrum for areas not including (0-10) arcmin centered on the ccd center for energies of your choice.
+</br>
+Here are the centers used in DET coordinate:
+</br>
+
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:black">
+<black><i>
+</br>
+mos1: 191.5,-345.5
+</br>
+mos2: 191.5,-345.5
+</br>
+pn: -2203.5,-1167.5
+</span>
+</i></black>
+</br>
+
+</br>
+2. Extract the i--OUT FOV--i spectrum in the same energy range.
+</br>
+3. surface brightness = (number of counts)/area/exposure
+</br>
+For the <i>number of counts</i> and <i>exposure</i>, they can be extracted from the spectrum directly. For the area, you cannot get the exact area without doing <i>backscal</i>, which takes a long time to do. Here what the script does is to provide a fixed area ratio of <i>IN</i> to <i>OUT</i> area. The problem with this is if there are missing ccds (the case of <i>mos1</i>), the ratio is over estimated. The area ratio is changed in this case. Also, for <i>pn</i>, the result is always "very contaminated".
+</br>
+
+</br>
+
+
+<span style="font-family: arial; sans-serif; font-size: 14pt; color:black;">
+<b><i>My Script</b></i>
+</span>
+</br>
+
+</br>
+Here is the basic idea of my script.
+</br>
+1. Create a whole FOV image in 8-12 keV (or any other range) in sky coordinate. 
+</br>
+Take <i>mos2</i> as an example:
+</br>
+
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red">
+<red>
+</br>
+  <i>
+evselect table=mos2S002-clean.fits:EVENTS filtertype=expression expression='(PATTERN<=12)&&(FLAG == 0) && region(mos2S002-bkg_region-sky.fits)&&(PI in [8000:12000]) ' filtertype=expression imagebinning='imageSize' imagedatatype='Int32' imageset=mos2S002-obj-im-8-12keV.fits squarepixels=yes ignorelegallimits=yes withxranges=yes withyranges=yes xcolumn='X' ximagesize=900 ximagemax=48400 ximagemin=3401 ycolumn='Y' yimagesize=900 yimagemax=48400 yimagemin=3401 updateexposure=yes filterexposure=yes 
+</br>
+</i>
+</span>
+</red>
+</br>
+
+</br>
+2. Calculate the surface brigtness in 10-12 arcmin from the ccd center using <i>surface brightness = (number of counts)/area/exposure</i>. Here don't use the vignetting-corrected exposure, just extract the exposure from the header. As stated in the paper, the flares are focussed by the mirrors, they shouldn't be affected by vignetting effect. If you use the vignetting-corrected exposure, you find every source is contaminated. The area is easily calculated using the exposure map by just summing up the number of pixels having a non-zero value. Use the combined exposure here because it has been corrected for <i>cheese</i>. You can create an exposure map in different energy ranges but the actual range is not importnat as they are almost identical whatever range you use. What is more, we just want the area, not the real value of the exposure. So, just use the one you have. 
+</br>
+
+</br>
+In the script, I convert the ccd center from <i>DET</i> coordinate to <i>IMAGE</i> coordinate since the image extracted is in sky coordinate (if in <i>DET</i> coordinate, you cannot use the exposure map since it is also in sky coordinate). Here are the ccd centers I use. I just get them by eyes:
+
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:black">
+<black>
+</br>
+<i>
+</br>
+mos1: 112,199
+</br>
+mos2: 155.661,285.833
+</br>
+pn: 285.8,719.722
+</br>
+</i>
+</span>
+</black>
+</br>
+
+</br>
+3. Create a spectrum of the corner in the same energy range:
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red">
+<red>
+</br>
+  <i>
+</br>
+evselect table=mos2S002-corn.fits filtertype=expression expression='((CCDNR==2)||(CCDNR==3)||(CCDNR==4)||(CCDNR==6)||(CCDNR==7))&&(PI in [8000:12000])' spectrumset='mos2S002-corn-8-12keV.pi' energycolumn='PI' spectralbinsize=5
+</br>
+</i>
+</span>
+</red>
+</br>
+In the script, I filter out all the bad ccd chips by reading the text files(<i>goodccdlist_mos1.dat</i> and <i>goodccdlist_mos2.dat</i>) in <i>InputFiles</i>, which I create
+<a href="https://poonh.github.io/esas_DC/fovspecimage.html" class="current level_1" target="_blank">
+ previously
+</a>
+. Indeed it is not necessary since the anomalous part of a ccd chip only lies in the low energy range. After the spectrum is created, the area is retrived from the corner ccd chip spectrum (e.g. <i>mos2S002-2oc.pi</i> for chip 2) in <i>full_spectrum_mos2</i> using <i>fkeyprint</i>, again the folder is what I create in the 
+<a href="https://poonh.github.io/esas_DC/fovspecimage.html" class="current level_1" target="_blank">
+previous chapter
+</a>. The total corner area is just the sum of the ccd chips used. Finally the surface brightess is again: <i>number of counts)/area/exposure</i>. Here instead of extracting an image of the corner I extract a spectrum because I don't know how to calculate the area in the case. The exposure map(or <i>cheese</i>) doesn't include the corner. Also, for the same expression, you can extract both the spectrum and image, the number of events you have in both files are slightly different, and so are the area. The reason is probably due to the different pixel size (0.05 arcsec for spectrum and 2.5 arcsec for image). So to be consistent, I extract the counts and area using the same source. 
+</br>
+4. Finally the script returns you the ratio (surface brightness of 10-12 arcmin)/(surface brightness of the corner)
+</br>
+
+</br>
+As for <i>pn</i>, you don't have to consider the <i>oot</i> events. I tried both cases, including and excluding <i>oot</i> events and the results are the same. 
+</br>
+
+</br>
+Now let's run the script:
+</br>
+
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red">
+<red> <i>
+</br>
+setenv SAS_CCF ccf.cif 
+</br>
+python bin/residual_sp_script.py
+</span>
+</i></red>
+</br>
+
+</br>
+Here is what you see on the screen (result of MCXC J0106.8+0103):
+</br>
+
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:black">
+<black> <i>
+</br>
+mos1 ratio=0.88. It is not contaminated
+</br>
+mos2 ratio=0.98. It is not contaminated
+</br>
+pn ratio=1.00. It is not contaminated
+</span>
+</i></black>
+</br>
+
+</br>
+Now we know whether the data has residual proton flares. We can move on the check for 
+<a href="https://poonh.github.io/esas_DC/swcx.html" class="current level_1" target="_blank">
+Solar Wind Charge-Exchange (SWCX)
+</a>.
+</br>
+
+</br>
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:black">
+<b>Online Materials:</b>
+</span>
+</br>
+<a href="https://heasarc.gsfc.nasa.gov/docs/xmm/scripts/xmm_trend.html" class="current level_1" target="_blank">
+XMM-NEWTON Solar Wind Charge Exchange/Soft Proton Tool
+</a>
+</br>This website can produce the diagnostic plots(Fig.1 and Fig.2) online.
+</br>
+</br>
 
 					    
 </style></span></p><p class="MsoNormal" style="line-height: 16.866667px;"><span lang="EN-GB" style="font-size: 12pt; line-height: 18.4px;">&nbsp;</span></p>
