@@ -7,13 +7,13 @@ import numpy as np
 
 
 def extractcoor(ccd,x,y): 
-        img="../%s-obj-image-det.fits"%ccd
+        img="%s-obj-image-det.fits"%ccd
         if os.path.isfile(img) == False:
            print("%s is missing. Cannot perform coordinate conversion. %s is a product of mos-filter. If it is not present, do the following. Just copy and paste at the terminal and do this part again."%(img,img))
            print("evselect table=%s-clean.fits withimageset=yes imageset=%s-obj-image-det.fits xcolumn='DETX' ximagesize=780 ximagemax=19500 ximagemin=-19499 ycolumn='DETY' yimagesize=780 yimagemax=19500 yimagemin=-19499 imagebinning=imageSize ignorelegallimits=yes"%(ccd,ccd))
            exit()
         elif os.path.isfile(img) == True:
-           os.system("ecoordconv imageset=../%s-obj-image-det.fits x=%s y=%s coordtype=POS > tmp.dat" %(ccd,x,y))#The image is a product of mos-filter. If it is not present, just do the following         
+           os.system("ecoordconv imageset=%s-obj-image-det.fits x=%s y=%s coordtype=POS > tmp.dat" %(ccd,x,y))#The image is a product of mos-filter. If it is not present, just do the following         
            DETX=commands.getoutput("head -6 tmp.dat | tail -1 | gawk '{print $3}'")
            DETY=commands.getoutput("head -6 tmp.dat | tail -1 | gawk '{print $4}'")       
            os.system("cat tmp.dat")
@@ -40,7 +40,7 @@ class cheese_commands():
    def fitstotxt(self,infile,outfile,parameters):#convert a fits text file into a text file using fdump 
       os.system('fdump %s+1 %s "%s" - pagewidth=256 prhead=no clobber=yes'%(infile,outfile,parameters))
    def makeImg(self,infileimg,infileexp,outfile,choice):#produce an image using farith,choice=MUL/DIV/SUB/ADD
-      os.system('farith %s %s %s %s'%(infileimg,infileexp,outfile,choice))
+      os.system('farith %s %s %s %s clobber=yes'%(infileimg,infileexp,outfile,choice))
    def emllistUpdate(self):  #update the flux of emllist.fits so that there is no INDEF for the summary band
       filename="emllist.fits"
       fitsfile = fits.open(filename,mode="update")
@@ -69,12 +69,13 @@ class cheese_commands():
              skyfile=infile
              detfile=skyfile.replace("sky","det")
           elif infile.find("det")>=0:
-             newfile=infile.replace("det","sky")
-          for Files in (infile,newfile):
+             detfile=infile
+             skyfile=skyfile.replace("det","sky")
+          for Files in (detfile,skyfile):
             for i in range(0,len(row)):
                for j in range(0,len(element)):
                   os.system("fpartab %s %s+1 %s row=%s element=%s"%(str(value),str(Files),str(parameter),str(row[i]),str(element[j])))  
-          os.system("make_mask inimage=%s-obj-im.fits inmask=%s-mask-im.fits outmask=%s-cheese.fits reglist=%s"%(ccd,ccd,ccd,outfile))        
+          os.system("make_mask inimage=%s-obj-im.fits inmask=%s-mask-im.fits outmask=%s-cheese.fits reglist=%s"%(ccd,ccd,ccd,skyfile))        
    def rowchange_py(self,infile,parameter,value,row,element):
        ccd=infile.split("-bkg_region")[0]
        fitsFile = fits.open(infile,mode="update")
@@ -90,7 +91,24 @@ class cheese_commands():
               for j in range(0,len(element)):
                   fitsFile[1].data[parameter][row[i]-1][element[j]-1]=value
           fitsFile.close()
-       os.system("make_mask inimage=%s-obj-im.fits inmask=%s-mask-im.fits outmask=%s-cheese.fits reglist=%s"%(ccd,ccd,ccd,skyfile))   
+       os.system("make_mask inimage=%s-obj-im.fits inmask=%s-mask-im.fits outmask=%s-cheese.fits reglist=%s"%(ccd,ccd,ccd,skyfile))  
+   def DeleteMask(self,oldfile,newfile):
+       Old=open(oldfile,"r").readlines()
+       New=open(newfile,"r").readlines()
+       old_x,new_x,remove_index=[],[],[]
+       for i in Old:
+           if i.find("ellipse")>=0:
+              old_x.append(i.split(",")[1])
+       for i in New:
+           if i.find("ellipse")>=0:  
+              tmp=i.split(",")[1]
+              if tmp.find(".")<0:
+                 tmp=str(str(tmp)+(".0"))
+              new_x.append(tmp)    
+       for i in old_x: 
+           if i not in new_x:
+              remove_index.append(old_x.index(i)+1) 
+       return remove_index
    def emptyFits(self,infile,output):#create an empty fits file to be merged to another file. The input file is the one you want to merge to.Set everything to 0 in output.
        os.system("cp %s %s"%(infile,output))
        fitsfile = fits.open("%s"%output,mode="update")
@@ -128,6 +146,26 @@ class cheese_commands():
           os.system("fpartab %s %s+1 ROTANG row=%s element=1"%(rotang,infile,row))
        else:
           print("You input the wrong file")
+   def ChangeMask(self,ccd,infile,row,x,y,r1,r2,rotang=None): #enlarge a mask which is already in mos2S002-bkg_region-sky.fits, the det file is automatically updated.
+       fitsfile = fits.open("%s"%infile)
+       hdu=fitsfile[1].data
+       xcoor=fitsfile[1].columns[1].name
+       detfile=infile.replace("sky","det")
+       detx,dety=extractcoor(ccd,x,y)
+       os.system("fpartab %s %s+1 X row=%s element=1"%(str(x),infile,row))
+       os.system("fpartab %s %s+1 Y row=%s element=1"%(str(y),infile,row))
+       os.system("fpartab %s %s+1 R row=%s element=1"%(str(r1),infile,row))
+       os.system("fpartab %s %s+1 R row=%s element=2"%(str(r2),infile,row))
+       if rotang is not None:
+          os.system("fpartab %s %s+1 ROTANG row=%s element=1"%(str(rotang),infile,row))     
+       os.system("fpartab %s %s+1 DETX row=%s element=1"%(detx,detfile,row))
+       os.system("fpartab %s %s+1 DETY row=%s element=1"%(dety,detfile,row))
+       os.system("fpartab %s %s+1 R row=%s element=1"%(r1,detfile,row))
+       os.system("fpartab %s %s+1 R row=%s element=2"%(r2,detfile,row))
+       if rotang is not None:
+          os.system("fpartab %s %s+1 ROTANG row=%s element=1"%(rotang,detfile,row))
+       fitsfile.close()
+       os.system("make_mask inimage=%s-obj-im.fits inmask=%s-mask-im.fits outmask=%s-cheese.fits reglist=%s"%(ccd,ccd,ccd,infile)) 
    def Mergefits(self,newfile,oldfile):#merge two fits tables together
        os.system('fmerge "%s[1] %s[1]" %s - clobber=yes'%(oldfile,newfile,oldfile))
    def MakeMask(self,ccd,newcheesefile,reglist): #make a new mask image(newcheesefile) with a new region list(reglist)
