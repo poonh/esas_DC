@@ -322,7 +322,8 @@
 
                             <div id="cc-matrix-1112072272">
                                 <div id="cc-m-4981642472" class="j-module n j-header ">
-                                    <h1 class="" id="cc-m-header-4981642472">Solar Wind Charge Exchange(SWCX)</h1>
+                                    <h1 class="" id="cc-m-header-4981642472">Checking for Solar Wind Charge Exchange(SWCX)
+</h1>
                                 </div>
                                 <div id="cc-m-4981638072" class="j-module n j-textWithImage ">
                                     <figure class="cc-imagewrapper cc-m-image-align-1">
@@ -342,18 +343,304 @@ insert begins
 
 
 
-<!--
--->
-
-
-
 <span style="font-family: arial; sans-serif; font-size: 12pt; text-align: right;">
 </br>
 
 </br>
-To be finished ...
+ <div style="text-align: right;">
+</br>
+Last Updated:2023/06/22
+</div>
+</align right>
+</br>
+
+</br>
+This part follows the steps from these two papers (but somewhat simplified):
+</br>
+1. 
+<a href="https://ui.adsabs.harvard.edu/abs/2008A&A...489..837C" class="current level_1" target="_blank">
+Identifying XMM-Newton observations affected by solar wind charge exchange. Part I (Carter & Sembay 2008)
+</a>.
+</br>
+2. 
+<a href="https://ui.adsabs.harvard.edu/abs/2011A%26A...527A.115C/abstract" class="current level_1" target="_blank">
+Identifying XMM-Newton observations affected by solar wind charge exchange. Part II (Carter et al. 2011)
+</a>.
+</br>
+
+</br>
+Better read them first, especially the first one.
+</br>
+
+</br>
+Here are what I use for this tutorial:
+</br>
+
+</br>
+Source: MCXC J0106.8+0103 
+</br>
+Observation ID: 0762870601 
+</br>
+SAS Version: 19.0.0
+</br>
+Python version: 3
+</br>
+csh is used
+</br>
+
+</br>
+Everything you need in this tutorial is in:
+<a href="https://poonh.github.io/esas_DC/swcx.zip" class="current level_1" target="_blank">
+swcx.zip 
+</a>.
+</br>
+
+</br>
+You work in the main folder <i>swcx</i>, there are several subfolders:
+</br>
+1. src - the source code is found here.
+</br>
+2. InputFiles - the folder in which the good ccd lists for <i>mos1(goodccdlist_mos1.dat)</i> and <i>mos2(goodccdlist_mos2.dat)</i> are put. This is created in
+<a href="https://poonh.github.io/esas_DC/anol_ccd.html" class="current level_1" target="_blank">
+  Anomalous CCD Check
+</a>.
+</br>
+3. products - the files created in this tutorial. They are put in the main folder if you create them successfully.
+</br>
+
+</br>
+If you have already finished the last chapter and keep everything well. Then, you just need to copy the scripts in <i>src</i> to your current <i>src</i> folder. 
+</br>
+
+</br>
+Here are what you need in the main folder <i>swcx</i>. You should have them already if you follow the steps in the previous chapters. 
+</br>
+
+</br>
+1. <i>mos1S001-gti.txt(fits)</i> and <i>mos2S002-gti.txt(fits)</i>. These files are for extraction of good time intervals common to <i>mos1</i> and <i>mos2</i>.
+</br>
+2. the clean event list: <i>mos1S001-clean.fits</i>, <i>mos2S002-clean.fits</i> and <i>pnS003-clean.fits</i>. You need them for everything.
+</br>
+</br>
+
+</br>
+<b>Basic ideas:</b>
+</br>
+1. A "line" lightcurve (0.5-0.7, where SWCX is found), and a "continuum" lightcurve (2.5 - 5.0 keV, where SWCX is not found) binned in 1000 seconds are extracted, then make a scatter plot with x=continnum and y=line. A linear correlation is assumed in case of no SWCX (but sometimes scatter does not necessarily indicate SWCX). Reduced χ<sup>2</sup> is derived using this equation:
+</br>
+</br>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow>
+    <msup>
+      <mi>χ</mi>
+      <mn>2</mn>
+    </msup>
+    <mo>=</mo>
+    <munder>
+      <mo>∑</mo>
+      <mi>i</mi>
+    </munder>
+    <msup>
+      <mrow>
+        <mo stretchy="true" form="prefix">(</mo>
+        <msub>
+          <mi>D</mi>
+          <mi>i</mi>
+        </msub>
+        <mo>−</mo>
+        <mi>E</mi>
+        <mo stretchy="true" form="postfix">)</mo>
+      </mrow>
+      <mn>2</mn>
+    </msup>
+    <mi>/</mi>
+    <msubsup>
+      <mi>σ</mi>
+      <mi>i</mi>
+      <mn>2</mn>
+    </msubsup>
+  </mrow>
+</math>
+</br>
+
+
+Since y is the line lightcurves, I take σ as the error of y. 
+</br>
+2. In the paper, it says "we computed the χ<sup>2</sup> values for each individual lightcurve and calculate the ratio(R) between the line and continuum band χ<sup>2</sup> values". I am not sure whether I get this right...I think x and y are reversed for step 1 and χ<sup>2</sup> is re-calculated. But since σ is small for the continuum, this results in a big χ<sup>2</sup>, and the ratio is always smaller than 1...
+</br>
+
+</br>
+Summing the above, I only provide a line-continuum scatter plot and the value of reduced χ<sup>2</sup>. I don't do exactly in the same way as the papers. They are more strict. If you read the paper, to determine whether SWCX exists is complicated, there are some exceptional cases where you cannot tell whether SWCX exists with the value of reduced χ<sup>2</sup> and the ratio R, and there is no absolute threshold above which SWCX exists. Check the plot by eyes first anyway.
+</br>
+
+</br>
+
+</br>
+<b>Detailed steps:</b>
+</br>
+1. To combine the lightcurves of <i>mos1</i> and <i>mos2</i>, the common good time interval is extracted first.
+
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:black">
+<red>
+</br>
+<i>
+</br>
+a.timecheck()
 </span>
-<!--
+</red>
+</i>
+</br>
+(from <i>bin/swcx_script.py</i>)
+</br>
+
+</br>
+and two new files called <i>mos1mos2-gti.txt</i> and <i>mos1mos2-gti.fits</i> are produced.
+</br>
+</br>
+2. Using the newly-produced gti, produce a clean events list again. <i>mos2</i> is used as an example here.
+</br>
+
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red">
+<red>
+</br>
+<i>
+evselect table=mos2S002-clean.fits filteredset=mos2S002-clean_SWCX.fits expression='(PATTERN<=12)&& GTI(mos1mos2-gti.fits,TIME) &&(((FLAG & 0x766a0f63)==0)||((FLAG & 0x766a0763) == 0))' filtertype=expression
+</span>
+</red>
+</br>
+</i>
+(from <i>bin/swcx_script.py</i>)
+</br>
+
+</br>
+The same for <i>mos1</i>. I don't combine <i>pn</i> since its observations usually start an hour later. The newly produced event list with time intervals common to <i>mos1</i> and <i>mos2</i> is <i>mos2S002-clean_SWCX.fits</i>. Here I use the region [6-12] arcmin from the ccd center, which is far from r<sub>500</sub>.
+</br>
+
+</br>
+3. Produce the line ([0.5-0.7] keV) and continuum ([2.5-5.0] keV) lightcurves with time binsize = 1 second
+</br>
+
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red">
+<red>
+</br>
+<i>
+evselect table=mos2S002-clean_SWCX.fits filtertype=expression expression='(PATTERN <= 12)&&((CCDNR==2)||(CCDNR==3)||(CCDNR==4)||(CCDNR==6)||(CCDNR==7))&&(PI in [2500:5000])&& region(mos2S002-bkg_region-sky.fits) && ((DETX,DETY) IN circle(155.661,285.833,14400.0)) &&! ((DETX,DETY) IN circle(155.661,285.833,7200.0))' filtertype=expression rateset=mos2S002-LC-2.5-5.0keV-6-12am.fits timecolumn=TIME timebinsize=1 maketimecolumn=yes makeratecolumn=yes withrateset=yes
+</br>
+</br>
+evselect table=mos2S002-clean_SWCX.fits filtertype=expression expression='(PATTERN <= 12)&&((CCDNR==2)||(CCDNR==3)||(CCDNR==4)||(CCDNR==6)||(CCDNR==7))&&(PI in [500:700])&& region(mos2S002-bkg_region-sky.fits) && ((DETX,DETY) IN circle(155.661,285.833,14400.0)) &&! ((DETX,DETY) IN circle(155.661,285.833,7200.0))' filtertype=expression rateset=mos2S002-LC-2.5-5.0keV-6-12am.fits timecolumn=TIME timebinsize=1 maketimecolumn=yes makeratecolumn=yes withrateset=yes																											    
+</span>
+</red>
+</br>
+</i>
+(from <i>bin/swcx_commands.py</i>)
+</br>
+
+</br>
+The lightcurves are <i>mos2S002-LC-2.5-5.0keV-6-12am.fits</i> and <i>mos2S002-LC-0.5-0.7keV-6-12am.fits</i>.
+</br>
+
+</br>
+4. Reduced χ<sup>2</sup> is calculated. The values of <i>mos1</i>, <i>mos2</i>, <i>pn</i> and combined <i>mos1</i> and <i>mos2</i> are returned. The line-continuum scatter plots are produced. I don't take into account errors of the data points when fitting. 
+
+
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:black">
+<red>
+</br>
+<i>
+</br>
+a.LowvsHighLC()
+</span>
+</red>
+</br>
+</i>
+
+(from <i>bin/swcx_script.py</i>)
+</br>
+
+<a href="https://poonh.github.io/esas_DC/figs/swcx-mos1-line-continuum.png" class="current level_1" target="_blank">
+<img border="0" height="450.0" width="550" src="https://poonh.github.io/esas_DC/figs/swcx-mos1-line-continuum.png"></a>
+</br>
+Fig.1. line-continnuum scatter plot with best-fit of <i>mos1</i>
+</br>
+
+<a href="https://poonh.github.io/esas_DC/figs/swcx-mos2-line-continuum.png" class="current level_1" target="_blank">
+<img border="0" height="450.0" width="550" src="https://poonh.github.io/esas_DC/figs/swcx-mos2-line-continuum.png"></a>
+</br>
+Fig.2. line-continnuum scatter plot with best-fit of <i>mos2</i>
+</br>
+
+<a href="https://poonh.github.io/esas_DC/figs/swcx-pn-line-continuum.png" class="current level_1" target="_blank">
+<img border="0" height="450.0" width="550" src="https://poonh.github.io/esas_DC/figs/swcx-pn-line-continuum.png"></a>
+</br>
+Fig.3. line-continnuum scatter plot with best-fit of <i>pn</i>
+</br>
+
+<a href="https://poonh.github.io/esas_DC/figs/swcx-mos1-mos2-line-continuum.png" class="current level_1" target="_blank">
+<img border="0" height="450.0" width="550" src="https://poonh.github.io/esas_DC/figs/swcx-mos1-mos2-line-continuum.png"></a>
+</br>
+Fig.4. line-continnuum scatter plot with best-fit of combined <i>mos1</i> and <i>mos2</i>
+</br>
+
+</br>
+Here are the reduced χ<sup>2</sup> found:
+<span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:black">
+<black>
+</br>
+<i>
+</br>
+reduced chi square for mos1,mos2,pn and combined mos1 and mos2:
+</br>
+2.322, 1.246, 3.062, 0.998
+</span>
+</black>
+</br>
+</i>
+</br>
+
+</br>
+Do you think they are contaminated by SWCX? Maybe. Most plots are like that actually.
+</br>
+
+</br>
+Let me show you some examples where SWCX are clearly not found.
+</br>
+
+<a href="https://poonh.github.io/esas_DC/figs/swcx-J0158-pn-line-continuum.png" class="current level_1" target="_blank">
+<img border="0" height="450.0" width="550" src="https://poonh.github.io/esas_DC/figs/swcx-J0158-pn-line-continuum.png"></a>
+<a href="https://poonh.github.io/esas_DC/figs/swcx-J0158-mos1-mos2-line-continuum.png" class="current level_1" target="_blank">
+<img border="0" height="450.0" width="550" src="https://poonh.github.io/esas_DC/figs/swcx-J0158-mos1-mos2-line-continuum.png"></a>
+</br>
+Fig.5. line-continnuum scatter plot with best-fit of <i>pn</i>(up,reduced χ<sup>2</sup> = 2.2) and combined <i>mos1+mos2</i>(down,reduced χ<sup>2</sup> = 1.9) of MCXC J0158.4-0146 (Obid: 0762870301)
+</br>
+
+</br>
+Here are examples where SWCX are obvious.
+
+<a href="https://poonh.github.io/esas_DC/figs/swcx-J0231-pn-line-continuum.png" class="current level_1" target="_blank">
+<img border="0" height="450.0" width="550" src="https://poonh.github.io/esas_DC/figs/swcx-J0231-pn-line-continuum.png"></a>
+<a href="https://poonh.github.io/esas_DC/figs/swcx-J0231-mos2-line-continuum.png" class="current level_1" target="_blank">
+<img border="0" height="450.0" width="550" src="https://poonh.github.io/esas_DC/figs/swcx-J0231-mos2-line-continuum.png"></a>
+</br>
+Fig.6. line-continnuum scatter plot with best-fit of <i>pn</i>(up,reduced χ<sup>2</sup> = 1.7) and <i>mos2</i>(down,reduced χ<sup>2</sup> = 1.3) of MCXC J0231.7-0451 (Obid: 0762870201)
+</br>
+
+</br>
+So from the above example, you see the first example, MCXC J0158.4-0146, has got a good fit but a larger reduced χ<sup>2</sup>. It just depends on the error size ...
+
+</br>
+</br>
+
+Sometimes it is really hard to decide whether SWCX exists and you don't want to go too deep spending too much time to find it out. For very contaminated sources, you can actually see clear solar line emissions in the spectrum (see fig.11 of the <a href="https://ui.adsabs.harvard.edu/abs/2008A&A...489..837C" class="current level_1" target="_blank">2008</a> paper). If you think SWCX exists, you can include the emission lines in the spectral fit first, and check for the flux to see its strength first. We will talk more in
+
+<a href="https://poonh.github.io/esas_DC/spectral_fit.html" class="current level_1" target="_blank">
+Spectral Fit
+</a>.
+</br>
+
+
+</br>
+
+</span>
 <!--
 insert ends
 -->
