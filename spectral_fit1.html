@@ -267,18 +267,16 @@
                                                 <span>Emission Peak vs. Emission-weighted Centre</span>
                                             </a>
                                        </li>
-                                            <li id="cc-nav-view-912164772">
+                                       <li id="cc-nav-view-912164772">
                                             <a href="https://poonh.github.io/esas_DC/spectral_fit1.html" class="current level_1">
                                                 <span>Spectral Fit1</span>
                                             </a>
-                                        </li>	
-
+                                       </li>
                                        <li id="cc-nav-view-912164772">
                                             <a href="https://poonh.github.io/esas_DC/spectral_fit2.html" class="current level_1">
                                                 <span>Spectral Fit2</span>
                                             </a>
                                         </li>	
-	
                                        <li id="cc-nav-view-912164772">
                                             <a href="https://poonh.github.io/esas_DC/luminosity_cal.html" class="current level_1">
                                                 <span>Luminosity Calculation</span>
@@ -329,7 +327,7 @@
 
                             <div id="cc-matrix-1112072272">
                                 <div id="cc-m-4981642472" class="j-module n j-header ">
-                                    <h1 class="" id="cc-m-header-4981642472">Spectral Fit
+                                    <h1 class="" id="cc-m-header-4981642472">Spectral Fit1
 </h1>
                                 </div>
                                 <div id="cc-m-4981638072" class="j-module n j-textWithImage ">
@@ -344,30 +342,308 @@
 
 <!--
 insert begins
-<!--
-insert begins
--->
-
-
-
-<!--
--->
-
-
-
-<!--
--->
-
-
+  -->
 
 <span style="font-family: arial; sans-serif; font-size: 12pt; text-align: right;">
 </br>
+In order to perform spectral fit for spectra extracted from different annuli, we first have to create the spectra. In this chapter, we are going to learn how to do it, and the fitting will be performed in the next one.</br></br>
+
+To create annuli of suitable size for spectral fit, we need to define "suitable". Some people use number of counts, some use signal to noise(S/N) ratio. I suggest some readings first:</br></br>
+
+If you don't want to use cross arf, make sure the size of each annulus is > 30 arcsecs to limit flux redistribution to < 20% (<a href="https://ui.adsabs.harvard.edu/abs/2007A%26A...467..437Z/abstract" class="current level_1" target="_blank">Zhang 2007</a> Scaling relations and mass calibration of the X-ray luminous galaxy clusters at redshift ~0.2: XMM-Newton observations, Sec 2.3). In the same paper, the authors require a net counts of ~ 2000 in 2-7 keV for each spectrum.</br></br>
+
+ <a href="https://ui.adsabs.harvard.edu/abs/2020ApJ...892..102L/abstract" class="current level_1" target="_blank">Lovisari et al 2020 </a>(X-Ray Scaling Relations for a Representative Sample of Planck-selected Clusters Observed with XMM-Newton) defined annulus size by S/N ratio and some other criteria. One purpose of deriving the spectrum of different annulus is to derive the temperature profile (for the derivation of hydrostatic mass). How many bins are enough? A good reference is Table 3 of this paper, column 11 N<sub>T</sub>. You see the number of bins can be as small as 1, and more than 30.</br></br>
+
+To derive the hydrostatic mass, you can use the backward method (based on a model like NFW profile) or forward method (no model assumed, I used this method for my work). In another paper by <a href="https://ui.adsabs.harvard.edu/abs/2020A%26A...644A..78L/abstract" class="current level_1" target="_blank">Lovisari et al 2020 (Comparing different mass estimators for a large subsample of the Planck-ESZ clusters)<a/>, the less extrapolation of the temperature profile (i.e. last bin being closed to r<sub>500</sub>, the better the agreement between the hydrostatic mass derived using forward and backward method. Again in Table 3 of the above mentioned paper, column 12 f<sub>T</sub>, you can check the fraction of r<sub>500</sub> covered by the temperature profile. Also in the code I provide in this chapter, I provide the fraction of the mid point of the outermost annulus to the limiting radius you provide. </br></br>
+
+There are many others papers suitable. I will update this list later.</br></br>
+  
+
+Here are what I use for this tutorial: </br></br>
+
+Source: MCXC J0106.8+0103 </br>
+Observation ID: 0762870601 </br>
+SAS Version: 19.0.0 </br>
+Python version: 2 (3 maybe ok, I don't have enought time to check) </br>
+csh is used </br></br>
+
+Everything you need in this tutorial is in:  <a href="https://poonh.github.io/esas_DC/spectral_fit1.zip" class="current level_1" target="_blank">spectral_fit1.zip</a> . </br></br>
+
+You work in the main folder swcx, there are several subfolders: </br>
+1. src - the source code is found here. </br>
+2. InputFiles - the folder in which the good ccd lists for mos1(goodccdlist_mos1.dat) and mos2(goodccdlist_mos2.dat) are put. This is created in Anomalous CCD Check. </br>
+3. products - the files created in this tutorial. They are put in the main folder if you create them successfully. There are a lot of folders created in this chapter. I am just enclosing <i>mos2S002-0-30</i> as an example.</br>
+4. command and log - these are empty folders to be written. You find the same folders in <i>products</i> with files inside.</br></br>
+
+
+If you have already finished the last chapter and keep everything well. Then, you just need to copy the scripts in src to your current src folder. </br></br>
+
+Here are what you need in the main folder spectral_fit1. You should have them already if you follow the steps in the previous chapters. I already put them in the zip file. </br></br>
+
+1. <i>Centre.txt</i>. We produced this file previously. It contains central position of the cluster in different coordinate systems.</br>
+2. the clean event list: mos1S001-clean.fits, mos2S002-clean.fits and pnS003-clean.fits. You need them for everything. </br></br>
+
+
+
+
+
+
+If you want to define the size of an annulus by the number of counts,N. Then
+</br></br>
+
+<i>
+  N = number_of_spectral_counts - number_of_background_counts
+</i>
+
+</br></br>
+For S/N ratio (noise taken as error of Poisson statistics):
+</br></br>
+S/N = (number_of_spectral_counts - number_of_background_counts)/sqrt(number_of_spectral_counts)
+
+</br></br>
+Note: The spectrum includes both the FOV and background counts.
+</br></br>
+
+So in order the estimate the counts (or S/N) in a certain annulus, we need both the FOV and background spectra. The FOV spectrum takes seconds to produce but the background spectrum takes hours(you need to produce the corner spectra, images of each ccd chip...etc). To make things easier, I use the FOV and background images in the same energy range as the spectrum. For spectral anaylsis, I use 0.7 - 10keV, so now I extract images in the same range. Remember for the FOV spectrum and image, they are from the same source(i.e.<i>mos2S002-clean.fits</i>), so both the spectrum and image return you the same number of photons. But for the particle background spectrum and the particle background image, they are from different sources. However, in Table 2 of <a href="https://poonh.github.io/esas_DC/fovspecimage.html" class="current level_1" target="_blank"> FOV Spectrum of Image</a>, for the background spectrum and image in 0.7-10 keV, the <i>mos</i> ccds roughly have the same number of counts (<i>pn</i> is different but <i>pn</i> gives you enough counts anyway), so I think it is good to use the image data as an estimate. </br></br>
+
+
+Now we produce the images in the 0.7 - 10 keV using the script <i>src/spectral_fit_script.py</i>:</br></br>
+
+<i>
+  <span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red">
+    python3 src/spectral_fit_script.py 1
+  </span>
+  </i>
+</br></br>
+
+"1" is step 1, which produces the following files in the folder <i>full_spectrum_mos2</i> (<i>mos2</i> is used as an example):</br></br>
+
+<i>
+mos2S002-obj-im-700-10000.fits (image of the FOV in sky coordinate)</br>
+mos2S002-obj-im-det-700-10000.fits (image of the FOV in detector coordinate)</br>
+mos2S002-im1-700-10000.fits (images of the ccd chip of the fwc files, only for good ccd chips)</br>
+mos2S002-im2-700-10000.fits</br>
+mos2S002-im3-700-10000.fits</br>
+mos2S002-im4-700-10000.fits</br>
+mos2S002-im5-700-10000.fits</br>
+mos2S002-im6-700-10000.fits</br>
+mos2S002-im7-700-10000.fits</br>
+mos2S002-exp-im-700-10000.fits (exposure image)</br>
+mos2S002-mask-im-700-10000.fits (an image indicating bad pixels and ccd gaps)</br>
+mos2S002-back-im-det-700-10000.fits (background image in detector coordinate)</br>
+mos2S002-back-im-sky-700-10000.fits (background image in sky coordinate)</br>
+comb-obj-im-700-10000.fits (mos2S002-obj-im-700-10000.fits*cheese)</br>
+comb-back-im-sky-700-10000.fits (mos2S002-back-im-sky-700-10000.fits*cheese)</br>
+comb-exp-im-700-10000.fits (mos2S002-exp-im-700-10000.fits*cheese corrected by scaling factor)</br>
 
 </br>
-To be finished ...
+</i>
+
+For <i>pn</i>, you also need the relevent <i>oot</i> images. Don't worry. The script has got it already.</br></br>
+
+We already produced the images in the soft band - 0.4 - 2.3 keV in <a href="https://poonh.github.io/esas_DC/fovspecimage.html" class="current level_1" target="_blank"> FOV Spectrum and Image</a>, and we wrote the commands in <i>command/FOV_imgspe_mos2.csh</i> . Now we are just doing the same thing. We first extract the relevant commands in <i>command/FOV_imgspe_mos2.csh</i> and rewrite them in <i>full_spectrum_mos2/backgd_command_mos2.csh</i> by replacing the old energy range with the new one. In the python script, <i>full_spectrum_mos2/backgd_command_mos2.csh</i> is run automatically and files are created in the same folder. In case of problems, run the commands in the csh script one by one to check where the problems are.</br></br>
+
+
+2. Now we have produced the files in the energy range we want, it would be good to take a look at the surface brightness profile and check the size of the cluster. You can also take the r<sub>500</sub> value in the MCXC catalogue as reference. The surface brightness profile also tells where you can choose the cosmic X-ray background. For me, I choose a region certain distance away from r<sub>500</sub>(say, 0.5 to 1 arcmin away). I will have more details in the next chapter <a href="https://poonh.github.io/esas_DC/spectral_fit2.html" class="current level_1" target="_blank">Spectral Fit II </a>.</br></br>
+
+The problem comes here. We work in the range 0.7 - 10 keV, so we are supposed to check the profile in this range, right? </br></br>
+
+<i>
+  <span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red">
+    python3 src/spectral_fit_script.py 2a
+  </span>
+</i>
+</br></br>
+("2a" plots the the surface brightness profile using the combined image, background and exposure map (i.e. <i>comb-obj-im-700-10000-mos2.fits</i>, <i>comb-back-im-sky-700-10000-mos2.fits</i> and <i>comb-exp-im-700-10000-mos2.fits</i>) in the folder <i>full_spectrum_mos2</i> in 0.7 - 10 keV (surface brightness = (image - background)/exposure). In case you forget the meaning of "combined", check Fig. 10 of <a href="https://poonh.github.io/esas_DC/fovspecimage.html" class="current level_1" target="_blank">FOV spectrum and image</a>)
+</br></br>
+
+<a href="https://poonh.github.io/esas_DC/figs/spectral_fit1_sb_0.7-10eV.png" class="current level_1" target="_blank">
+<img border="0" data-original-height="400" data-original-width="700" height="500" width="600" src="https://poonh.github.io/esas_DC/figs/spectral_fit1_sb_0.7-10eV.png"></a>
+</br>
+Fig.1 Surface brightness profile of <i>pnS003</i>, <i>mos1S001</i> and <i>mos2S002</i> using combined images, background and exposure in 0.7 - 10.0 keV.
+</br></br>
+
+
+
+This cluster has a r<sub>500</sub> of ~ 4.6 arcmins. The rising trend towards the end is due to the vignetting effect. Remeber the Sx = counts/exposure. Towards outer radius we have less and less counts, and the exposure gets smaller and smaller due to vignetting effect.  The effect of smaller exposure outweighs the effect of less counts, resulting in a rising profile (I believe if you have a long enough exposure time, you will have sufficient counts to have a flat profile). You see this trend in most clusters.</br></br>
+I got off topic... the problem here is obviously <i>pn</i> has a higher cosmic X-ray background. So what about 0.4 - 2.3 keV?</br></br>
+
+
+<i>
+  <span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red">
+    python3 src/spectral_fit_script.py 2
+  </span>
+</i>
+</br></br>
+("2" produces the same plot but in 0.4 - 2.3 keV)</br></br>
+
+
+<a href="https://poonh.github.io/esas_DC/figs/spectral_fit1_sb_0.4-2.3eV.png" class="current level_1" target="_blank">
+<img border="0" data-original-height="400" data-original-width="700" height="500" width="600" src="https://poonh.github.io/esas_DC/figs/spectral_fit1_sb_0.4-2.3eV.png"></a>
+</br>
+Fig.2 Surface brightness profile of <i>pnS003</i>, <i>mos1S001</i> and <i>mos2S002</i> using combined images, background and exposure in 0.4 - 2.3 keV. 
+</br></br>
+
+
+So you see here, for 0.4 - 2.3 keV, you have a <i>pn</i> profile which agress with <i>mos</i>, but not 0.7 - 10 keV. What does it mean? It is probably due to the particle background image. Let me remind you:
+
+Sx = (counts - particle background)/exposure
+
+which is
+
+[(comb-obj-im-400-2300.fits) - (comb-back-im-sky-400-2300.fits)]/(comb-exp-im-700-400-2300.fits)
+
+The difference in outer radius in the 0.7 - 10 keV plot is likely due to the particle background. Since this energy range shows noticeble difference I really wonder whether the particle background in this energy range correctly reflects the particle background ...Luckily for luminosity calculation, we only use the soft band. However, there is another problem, if the image correctly reflects the CXB background in all ccds, which mainly lies in low energy, what about the spectrum? In Table 2 of
+
+<a href="https://poonh.github.io/esas_DC/fovspecimage.html" class="current level_1" target="_blank">
+  FOV spectrum and image</a>, I already showed that in the soft band, for the <i>mos</i> CCDs, the spectrum only have half of the background counts of the image (both are produced by <i>mos_back</i>) while <i>pn</i> has roughly the same number. If the background image in the soft band gives an accurante description of the background, then the spectrum wouldn't ...ok... I will check in the next chapter. What is affected here is the CXB value, an overestimation of which leads to underestimation of the APEC normalization of the cluster. If you use spectral data to do the luminosity, it is certainly affected. </br></br>
+
+By the way, 1) this is true for all sources, except for those with noticeable soft proton contamination. At this stage, the image still contains soft proton, which will be removed after spectra fit. I will come back to check the surface brightness profile in 0.7 - 10 keV again to see whether soft proton is successfully removed (OK! I found another way of checking for soft protons. This means. If soft proton outweighs particle background, <i>pn</i> and <i>mos</i> surface brightness profiles still overlap at the outskirt). 2) The problem comes from 7 - 10 keV, the high energy end (I checked the images in different energy bands but I am not showing the results here). 
+
+</br></br>
+
+I need to go back to track ... from the above two plots (fig 1 and 2), the fortunate thing is the profiles for all ccds for any energy range becomes flat at more or less the same point, roughly 4 - 5 arcmins. Then we can decide where to choose the CXB. Here I use 4.6 arcmin (taken from the MCXC catalogue) as the cutoff radius for the cluster and 5.6 - 15 arcmin as the CXB background. 
+
+</br></br>
+
+
+
+3. Now we have set our criteria, we can run the script (You will be asked at the prompt to input the limiting radius. Enter in arcsec. The value for this sample is 276.):
+</br></br>
+
+<i>
+  <span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red">
+    python3 src/spectral_fit_script.py 3
+  </span>
+</i>
+</br></br>
+
+The criteria for the size of annulus is 1) > 1500 counts (I use <i>mos2</i> as reference here) 2) The inner and outer radii should be at least 30 arcsecs apart<a href="https://ui.adsabs.harvard.edu/abs/2008A&A...482..451Z" class="current level_1" target="_blank">(Zhang et al 2008)</a>. You can change the criteria by modifying the code. 
+
+</br></br>
+The script returns you the following:</br></br>
+
+<i>
+  <span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:black">
+    
+source region(arcsec) counts(bkg subtracted)</br>
+                   mos1        mos2      pn</br>
+0.00 - 30.00:  || 6134.66 || 6659.19 || 14701.18</br>
+30.00 - 60.00:  || 2785.77 || 2667.03 || 6127.48</br>
+60.00 - 110.00:  || 1720.39 || 1665.47 || 3546.17</br>
+110.00 - 276.00:  || 1640.75 || 1540.89 || 4329.92</br>
+S/N ratio</br>
+0.00 - 30.00:  || 81.44 || 78.18 || 120.99</br>
+30.00 - 60.00:  || 50.97 || 52.06 || 77.43</br>
+60.00 - 110.00:  || 38.23 || 38.90 || 57.03</br>
+110.00 - 276.00:  || 26.68 || 28.22 || 54.07</br>
+cxb region(arcsec) counts(bkg subtracted)</br>
+                   mos1        mos2      pn</br>
+336.00 - 596.00: 1368.19 || 1504.17 || 9870.67</br>
+596.00 - 900.00: 1463.09 || 1537.47 || 13368.24</br>
+S/N ratio</br>
+336.00 - 596.00: 19.45 || 17.55 || 72.80</br>
+596.00 - 900.00: 16.89 || 15.40 || 83.53</br>
+source/bkg ratio</br>
+336.00 - 596.00: 0.38 || 0.26 || 1.25</br>
+596.00 - 900.00: 0.24 || 0.19 || 1.16</br>
+('last region(mid point) to limiting radius ratio: ', '0.70')</br>
+The result is written in spectral_region.dat</br>
+    
+  </span>
+</i>
+</br></br>
+
+The final result is written in <i>spectral_region.dat</i> in the main folder. This file will be used when making the spectra. I provide the ratio of the mid-point of the last region to the limiting radius. As I said at the beginning, this ratio matters in   <span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red">the forward or backward method. </span>
+</br>
+
+This is the annuli (in arcsecs) for the source region and CXB. We set the outermost annulus of the source to be 276 arcsecs. And the CXB region begins at 276 + 60 = 336 arcsecs. There are two regions found for the CXB since the criteria is fulfilled. You can modify them manually if you want only one region. Just change  <i>spectral_region.dat</i>.</br></br>
+
+Now let's take a look at  <i>spectral_region.dat</i>:</br></br>
+
+<i>
+  <span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:black">
+0.0   source</br>
+30.0   source</br>
+60.0   source</br>
+110.0   source</br>
+276.0   source</br>
+336.0   cxb</br>
+596.0   cxb</br>
+900.0   cxb</br>
+ </span>
+</i>
+</br></br>
+
+This file tells you what regions are for the source and what regions are for CXB. </br></br>
+
+Before we move on to produce the spectra, if you just want to check the number of counts in a particular radius, do step 4:</br></br>
+
+<i>
+  <span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red">
+    python bin/spectral_fit_script.py 4
+     </span>
+</i>
+</br></br>
+
+
+
+Then you will be asked to input the inner and outer radius at the prompt, just input the values in arcsecs and you will get the number of counts and S/N ratio for the three ccds.</br></br>
+
+
+
+Finally, to produce the spectra, open 3 separate terminals and run the following 3 commands, one for each terminal:</br></br>
+
+<i>
+  <span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red">
+    source src/spectra-ann.csh mos1S001 path_to_calibration</br>
+    source src/spectra-ann.csh mos2S002 path_to_calibration</br>
+    source src/spectra-ann.csh pnS003 path_to_calibration</br></br>
 </span>
-<!--
-<!--
+</i>
+
+The script <i>src/spectra-ann.csh</i> does the following:</br></br>
+1) It reads <i>spectral_region.dat</i> and produces the spectrum one by one. A separate folder is created every time and an existing one is deleted. For example, the first spectrum in 0-30 arcsecs, a folder named <i>mos2S002-0-30</i> is created and everything is produced there. </br>
+2) The files necessary for producing the spectrum is copied to the folder (i.e. <i>mos2S002-clean.fits, mos2S002-bkg_region-sky.fits, mos2S002-bkg_region-det.fits</i> and the <i>oot</i> files for <i>pn</i>)</br>
+3) Since we are not producing the whole FOV spectrum, we need to provide a region. The script writes this file as <i>mos2-0-30.reg</i> (in the folder <i>mos2S002-0-30</i>). Here is the content of <i>mos2-0-30.reg</i>:</br></br>
+
+<i>
+  <span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:black">
+&&((DETX,DETY) IN circle(232.60537,-57.590704,600))&&!((DETX,DETY) IN circle(232.60537,-57.590704,0))
+</span>
+</i>
+
+</br></br>
+
+The centre is in detector coordinate and is read from <i>Centre.txt</i> in the main folder. Here the centre is <i>x =  232.6</i> and <i>y = -57.59</i>. <i>600</i> is the outer radius in pixels. Since one pixel = 0.05 arcsrc, 30 arcsecs translate to 600 pixels. The "0" is the inner radius. We work on the area <i>"IN circle(232.60537,-57.590704,600))"</i> but we excluse <i>"IN circle(232.60537,-57.590704,0))"</i>.</br>
+4) The following commands are executed:</br></br>
+
+<i>
+  <span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red">
+mos-spectra prefix=2S002 caldb=$path_to_calibration region=mos2-0-30.reg mask=1 elow=0 ehigh=0 ccd1=1 ccd2=1 ccd3=1 ccd4=1 ccd5=0 ccd6=1 ccd7=1 >& ../log/mos2-spectra-0-30.log
+mos_back prefix=2S002 caldb=$path_to_calibration elow=0 ehigh=0 ccd1=1 ccd2=1 ccd3=1 ccd4=1 ccd5=0 ccd6=1 ccd7=1 >& ../log/mos2_back-0-30.log
+</span>
+</i>
+</br></br>
+To decide which ccd chip should be enabled, the file <i>InputFiles/goodccdlist_mos2.dat</i> is read. We set <i>elow=0 ehigh=0</i> to produce the full energy range spectrum. If you only feel interested in a particular energy range, you can select it in the spectral fit when you use <i>XSPEC</i>. </br>
+
+The final products you want are: <i> mos2S002-obj.pi, mos2S002-back.pi, mos2S002.rmf</i> and <i>mos2S002-back.arf</i>. They are necessary for the spectral fit. The script renames them to <i>mos2S002-obj-0-30.pi, mos2S002-back-0-30.pi, mos2S002-0-30.rmf</i> and <i>mos2S002-0-30.arf</i>, respectively, and put them in the main folder.</br></br>
+
+The log files are written as <i>log/mos2-spectra-0-30.log</i> and <i>log/mos2_back-0-30.log</i>. If there is something wrong, check them. And the sub commands for <i> mos-spectra</i> are written in <i>command/mos2-spectra-0-30.csh</i>.</br></br>
+
+
+To make things faster, you can run all the spectra concurrently by opening multiple windows. Use the script <i>src/spectra-single.csh</i>:</br></br>
+
+<i>
+  <span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red">
+    source src/spectra-single.csh mos2S002 path_to_calibration 0 30</br></br>
+</span>
+</i>
+
+You just add the inner and outer radius in arcsecs and that particular spectrum would be produced.</br></br>
+
+
+
 <!--
 insert ends
 -->
