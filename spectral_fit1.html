@@ -344,9 +344,14 @@
 insert begins
   -->
 
+
+<span lang="EN-GB" style="color: red; font-size: 12pt; line-height: 18.4px;">
+  As of late September 2023, I do not have enough time to check this chapter in details. There might be a lot of bugs...</br></br>
+
+  </span>
+
 <span style="font-family: arial; sans-serif; font-size: 12pt; text-align: right;">
-</br>
-In order to perform spectral fit for spectra extracted from different annuli, we first have to create the spectra. In this chapter, we are going to learn how to do it, and the fitting will be performed in the next one.</br></br>
+In order to perform spectral fit for spectra extracted from different annuli, we first have to create the spectra. In this chapter, we are going to learn how to do it, and the fitting will be performed in the next <a href="https://poonh.github.io/esas_DC/spectral_fit2.html" class="current level_1" target="_blank"> one</a>.</br></br>
 
 To create annuli of suitable size for spectral fit, we need to define "suitable". Some people use number of counts, some use signal to noise(S/N) ratio. I suggest some readings first:</br></br>
 
@@ -354,7 +359,7 @@ If you don't want to use cross arf, make sure the size of each annulus is > 30 a
 
  <a href="https://ui.adsabs.harvard.edu/abs/2020ApJ...892..102L/abstract" class="current level_1" target="_blank">Lovisari et al 2020 </a>(X-Ray Scaling Relations for a Representative Sample of Planck-selected Clusters Observed with XMM-Newton) defined annulus size by S/N ratio and some other criteria. One purpose of deriving the spectrum of different annulus is to derive the temperature profile (for the derivation of hydrostatic mass). How many bins are enough? A good reference is Table 3 of this paper, column 11 N<sub>T</sub>. You see the number of bins can be as small as 1, and more than 30.</br></br>
 
-To derive the hydrostatic mass, you can use the backward method (based on a model like NFW profile) or forward method (no model assumed, I used this method for my work). In another paper by <a href="https://ui.adsabs.harvard.edu/abs/2020A%26A...644A..78L/abstract" class="current level_1" target="_blank">Lovisari et al 2020 (Comparing different mass estimators for a large subsample of the Planck-ESZ clusters)<a/>, the less extrapolation of the temperature profile (i.e. last bin being closed to r<sub>500</sub>, the better the agreement between the hydrostatic mass derived using forward and backward method. Again in Table 3 of the above mentioned paper, column 12 f<sub>T</sub>, you can check the fraction of r<sub>500</sub> covered by the temperature profile. Also in the code I provide in this chapter, I provide the fraction of the mid point of the outermost annulus to the limiting radius you provide. </br></br>
+To derive the hydrostatic mass, you can use the backward method (based on a model like NFW profile) or forward method (no model assumed, I used this method for my work). In another paper by <a href="https://ui.adsabs.harvard.edu/abs/2020A%26A...644A..78L/abstract" class="current level_1" target="_blank">Lovisari et al 2020</a> (Comparing different mass estimators for a large subsample of the Planck-ESZ clusters), the less extrapolation of the temperature profile (i.e. last bin being closed to r<sub>500</sub>), the better the agreement between the hydrostatic masses derived using the forward and backward method. Again in Table 3 of the above mentioned paper, column 12 f<sub>T</sub>, you can check the fraction of r<sub>500</sub> covered by the temperature profile. Also in the code I provide in this chapter, I provide the fraction of the mid point of the outermost annulus to the limiting radius you provide. </br></br>
 
 There are many others papers suitable. I will update this list later.</br></br>
   
@@ -364,31 +369,26 @@ Here are what I use for this tutorial: </br></br>
 Source: MCXC J0106.8+0103 </br>
 Observation ID: 0762870601 </br>
 SAS Version: 19.0.0 </br>
-Python version: 2 (3 maybe ok, I don't have enought time to check) </br>
+Python version: 2 (yes, it is 2 instead of 3 this time. I think what you need to do is to change "import commands" to "import subprocess,shlex") </br>
 csh is used </br></br>
 
-Everything you need in this tutorial is in:  <a href="https://poonh.github.io/esas_DC/spectral_fit1.zip" class="current level_1" target="_blank">spectral_fit1.zip</a> . </br></br>
+There are quite a lot of stuff in this tutorial, I separate them into two files:</br>
+   1. The main folder <i>spectral_fit1</i>:  <a href="https://poonh.github.io/esas_DC/spectral_fit1.zip" class="current level_1" target="_blank">spectral_fit1.zip</a> . </br>
+   2. The folder <i>products</i>:  <a href="https://poonh.github.io/esas_DC/products.zip" class="current level_1" target="_blank">products.zip</a> . Just put this folder under the main one.</br></br>
 
-You work in the main folder swcx, there are several subfolders: </br>
+   Only <i>mos2</i> is used as an example. </br> </br>
+
+You work in the main folder <i>spectral_fit1</i>, there are several subfolders: </br>
 1. src - the source code is found here. </br>
-2. InputFiles - the folder in which the good ccd lists for mos1(goodccdlist_mos1.dat) and mos2(goodccdlist_mos2.dat) are put. This is created in Anomalous CCD Check. </br>
-3. products - the files created in this tutorial. They are put in the main folder if you create them successfully. There are a lot of folders created in this chapter. I am just enclosing <i>mos2S002-0-30</i> as an example.</br>
-4. command and log - these are empty folders to be written. You find the same folders in <i>products</i> with files inside.</br></br>
+2. InputFiles - the folder in which the good ccd lists for mos1(goodccdlist_mos1.dat) and mos2(goodccdlist_mos2.dat) are put. This is created in  <a href="https://poonh.github.io/esas_DC/anol_ccd.html" class="current level_1" target="_blank">Anomalous CCD Check</a>. </br>
+3.full_spectrum_mos2 - you created this folder previously in  <a href="https://poonh.github.io/esas_DC/fovspecimage.html" class="current level_1" target="_blank">FOV spectrum and image</a>. The images are in the energy range 0.4 - 2.3 keV. Now we need to create images in 0.7 - 10 keV and we need the products created before. I put them in this folder already.</br>
+4. products - the files created in this tutorial. The new files are put in the main folder if you create them successfully. To avoid the files being overwritten I create this new folder. Here again you find <i>full_spectrum_mos2</i>. I put the new files created in this chapter in <i>products/full_spectrum_mos2</i>. There is another folder <i>mos2S002-0-30</i> in which you find the products created for the annulus [0 - 30] arcsec from the cluster centre.</br>
+5. command and log - these folders again contain old files needed to be used in this chapter. You find the same folders in <i>products</i> with new files inside.</br></br>
 
 
-If you have already finished the last chapter and keep everything well. Then, you just need to copy the scripts in src to your current src folder. </br></br>
+If you have already finished the previous chapters and keep everything well. Then, you just need to copy the scripts in <i>src</i> to your current <i>src</i> folder. </br></br>
 
-Here are what you need in the main folder spectral_fit1. You should have them already if you follow the steps in the previous chapters. I already put them in the zip file. </br></br>
-
-1. <i>Centre.txt</i>. We produced this file previously. It contains central position of the cluster in different coordinate systems.</br>
-2. the clean event list: mos1S001-clean.fits, mos2S002-clean.fits and pnS003-clean.fits. You need them for everything. </br></br>
-
-
-
-
-
-
-If you want to define the size of an annulus by the number of counts,N. Then
+Now let's begin with defining the size of an annulus by the number of counts, N, then
 </br></br>
 
 <i>
@@ -407,7 +407,7 @@ Note: The spectrum includes both the FOV and background counts.
 So in order the estimate the counts (or S/N) in a certain annulus, we need both the FOV and background spectra. The FOV spectrum takes seconds to produce but the background spectrum takes hours(you need to produce the corner spectra, images of each ccd chip...etc). To make things easier, I use the FOV and background images in the same energy range as the spectrum. For spectral anaylsis, I use 0.7 - 10keV, so now I extract images in the same range. Remember for the FOV spectrum and image, they are from the same source(i.e.<i>mos2S002-clean.fits</i>), so both the spectrum and image return you the same number of photons. But for the particle background spectrum and the particle background image, they are from different sources. However, in Table 2 of <a href="https://poonh.github.io/esas_DC/fovspecimage.html" class="current level_1" target="_blank"> FOV Spectrum of Image</a>, for the background spectrum and image in 0.7-10 keV, the <i>mos</i> ccds roughly have the same number of counts (<i>pn</i> is different but <i>pn</i> gives you enough counts anyway), so I think it is good to use the image data as an estimate. </br></br>
 
 
-Now we produce the images in the 0.7 - 10 keV using the script <i>src/spectral_fit_script.py</i>:</br></br>
+Now we produce the images in the 0.7 - 10 keV using the script <i>src/spectral_fit_script.py</i> (remember to change your calibration path at the beginning of the script first):</br></br>
 
 <i>
   <span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red">
@@ -416,7 +416,7 @@ Now we produce the images in the 0.7 - 10 keV using the script <i>src/spectral_f
   </i>
 </br></br>
 
-"1" is step 1, which produces the following files in the folder <i>full_spectrum_mos2</i> (<i>mos2</i> is used as an example):</br></br>
+"1" is step 1, which produces the following files in the folder <i>full_spectrum_mos2</i>:</br></br>
 
 <i>
 mos2S002-obj-im-700-10000.fits (image of the FOV in sky coordinate)</br>
@@ -441,10 +441,10 @@ comb-exp-im-700-10000.fits (mos2S002-exp-im-700-10000.fits*cheese corrected by s
 
 For <i>pn</i>, you also need the relevent <i>oot</i> images. Don't worry. The script has got it already.</br></br>
 
-We already produced the images in the soft band - 0.4 - 2.3 keV in <a href="https://poonh.github.io/esas_DC/fovspecimage.html" class="current level_1" target="_blank"> FOV Spectrum and Image</a>, and we wrote the commands in <i>command/FOV_imgspe_mos2.csh</i> . Now we are just doing the same thing. We first extract the relevant commands in <i>command/FOV_imgspe_mos2.csh</i> and rewrite them in <i>full_spectrum_mos2/backgd_command_mos2.csh</i> by replacing the old energy range with the new one. In the python script, <i>full_spectrum_mos2/backgd_command_mos2.csh</i> is run automatically and files are created in the same folder. In case of problems, run the commands in the csh script one by one to check where the problems are.</br></br>
+We already produced the images in the soft band - 0.4 - 2.3 keV in <a href="https://poonh.github.io/esas_DC/fovspecimage.html" class="current level_1" target="_blank"> FOV Spectrum and Image</a>, and we wrote the commands in <i>command/FOV_imgspe_mos2.csh</i> . Now we are just doing the same thing. We first extract the relevant commands in <i>command/FOV_imgspe_mos2.csh</i> and rewrite them in <i>full_spectrum_mos2/backgd_command_mos2.csh</i> by replacing the old energy range with the new one. In the python script, <i>full_spectrum_mos2/backgd_command_mos2.csh</i> is run automatically and files are created in the same folder. In case of problems, run the commands in the csh script one by one to check where the problems are. Again note that for my csh script, the calibration path is mine, so you cannot run it directly. </br></br>
 
 
-2. Now we have produced the files in the energy range we want, it would be good to take a look at the surface brightness profile and check the size of the cluster. You can also take the r<sub>500</sub> value in the MCXC catalogue as reference. The surface brightness profile also tells where you can choose the cosmic X-ray background. For me, I choose a region certain distance away from r<sub>500</sub>(say, 0.5 to 1 arcmin away). I will have more details in the next chapter <a href="https://poonh.github.io/esas_DC/spectral_fit2.html" class="current level_1" target="_blank">Spectral Fit II </a>.</br></br>
+Now we have produced the files in the energy range we want, it would be good to take a look at the surface brightness profile and check the size of the cluster. You can also take the r<sub>500</sub> value in the MCXC catalogue as reference. The surface brightness profile also tells where you can choose the cosmic X-ray background. For me, I choose a region certain distance away from r<sub>500</sub>(say, 0.5 to 1 arcmin away). I will have more details in the next chapter <a href="https://poonh.github.io/esas_DC/spectral_fit2.html" class="current level_1" target="_blank">Spectral Fit2 </a>.</br></br>
 
 The problem comes here. We work in the range 0.7 - 10 keV, so we are supposed to check the profile in this range, right? </br></br>
 
@@ -518,10 +518,10 @@ I need to go back to track ... from the above two plots (fig 1 and 2), the fortu
 </i>
 </br></br>
 
-The criteria for the size of annulus is 1) > 1500 counts (I use <i>mos2</i> as reference here) 2) The inner and outer radii should be at least 30 arcsecs apart<a href="https://ui.adsabs.harvard.edu/abs/2008A&A...482..451Z" class="current level_1" target="_blank">(Zhang et al 2008)</a>. You can change the criteria by modifying the code. 
+The criteria for the size of annulus is 1) > 1500 counts (I use <i>mos2</i> as reference here) 2) The inner and outer radii should be at least 30 arcsecs apart<a href="https://ui.adsabs.harvard.edu/abs/2008A&A...482..451Z" class="current level_1" target="_blank">(Zhang et al 2008)</a>. You can change the criteria by modifying the code (use of S/N instead of number of counts is ok). 
 
 </br></br>
-The script returns you the following:</br></br>
+The script returns you the following (the exact number may be slightly different):</br></br>
 
 <i>
   <span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:black">
@@ -554,7 +554,7 @@ The result is written in spectral_region.dat</br>
 </i>
 </br></br>
 
-The final result is written in <i>spectral_region.dat</i> in the main folder. This file will be used when making the spectra. I provide the ratio of the mid-point of the last region to the limiting radius. As I said at the beginning, this ratio matters in   <span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red">the forward or backward method. </span>
+The final result is written in <i>spectral_region.dat</i> in the main folder. This file will be used when making the spectra. I provide the ratio of the mid-point of the last region to the limiting radius. As I said at the beginning, this ratio matters in the forward or backward method. 
 </br>
 
 This is the annuli (in arcsecs) for the source region and CXB. We set the outermost annulus of the source to be 276 arcsecs. And the CXB region begins at 276 + 60 = 336 arcsecs. There are two regions found for the CXB since the criteria is fulfilled. You can modify them manually if you want only one region. Just change  <i>spectral_region.dat</i>.</br></br>
@@ -581,7 +581,7 @@ Before we move on to produce the spectra, if you just want to check the number o
 
 <i>
   <span style="font-family: arial; sans-serif; font-size: 12pt; text-align: left; color:red">
-    python bin/spectral_fit_script.py 4
+    python3 bin/spectral_fit_script.py 4
      </span>
 </i>
 </br></br>
