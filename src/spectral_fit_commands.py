@@ -10,7 +10,6 @@ class spectral_fit_commands():
    def makeImage(self,CCD,elow_ori,ehigh_ori,elow_new,ehigh_new,caldb):#input elow,ehigh(original and new) in keV
        elow_ori,ehigh_ori=str(int(elow_ori*1000)),str(int(ehigh_ori*1000))
        elow_new,ehigh_new=str(int(elow_new*1000)),str(int(ehigh_new*1000))
-       
        if CCD.find("mos1")>=0:
           ccd="mos1"
           ccdshort=CCD.split("mos")[1]
@@ -20,7 +19,6 @@ class spectral_fit_commands():
        if CCD.find("pn")>=0:
           ccd="pn"
           ccdshort=CCD.split("pn")[1]
- 
        outputname="full_spectrum_%s/backgd_command_%s.csh"%(ccd,ccd)    #the commands are written in full_spectrum_mos2/backgd_command_mos2.csh 
        if os.path.isfile(outputname) == True:
           os.system("rm %s"%outputname)

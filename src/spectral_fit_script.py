@@ -3,10 +3,13 @@ from sys import *
 import numpy as np
 import commands
 from spectral_fit_commands import spectral_fit_commands
-from spectrum_commands import spectrum_commands
+from spectrum_commands import spectrum_commands #the same one from the chapterFOV spectrum and image
 
 whichstep=argv[1]
-#limit=4.6 #limit for defining cluster area in arcmin. You can take r500 from the MCXC catalogue as reference.
+path_to_caldb="Enter your path here"
+mos1="mos1S001" #you may need to change this. Some sources has mos1S002 or mos1U001 ...etc
+mos2="mos2S002"
+pn="pnS003"
 
 if whichstep=="4":
    inradius=input("input the inner radius in arcsecs: ")
@@ -19,19 +22,12 @@ if whichstep=="3":
    limit=input("input the limiting radius in arcsecs: ")
    
 
-mos1=commands.getoutput("head -1 log/prefix.log | gawk '{print $1}'")
-mos2=commands.getoutput("head -2 log/prefix.log | tail -1 | gawk '{print $1}'")
-pn=commands.getoutput("tail -1 log/prefix.log  | gawk '{print $1}'")
+xc=float(commands.getoutput("grep 'xc,yc' Centre.txt | gawk '{print $5}'"))
+yc=float(commands.getoutput("grep 'xc,yc' Centre.txt | gawk '{print $6}'"))
 
-xc=float(commands.getoutput("grep 'PixX,PixY' log/Center.log | gawk '{print $3}'"))
-yc=float(commands.getoutput("grep 'PixX,PixY' log/Center.log | gawk '{print $4}'"))
 
-#r500=float(commands.getoutput("grep -i 'r500_mcxc_arcmin' r500_z.txt | gawk '{print $3}'"))
-
-#print "r500: ",r500
 elow_ori,ehigh_ori=0.4,2.3 #old energy range in keV, the files of which have already been produced
-#elow_new,ehigh_new=0.7,10
-#eloweV_new,ehigheV_new=int(0.7*1000),int(10*1000)
+
 
 elow_new,ehigh_new=0.7,10.0 #the new energy range in keV
 eloweV_new,ehigheV_new=int(elow_new*1000),int(ehigh_new*1000) 
@@ -44,24 +40,19 @@ mos1img,mos1back="%s-obj-im-det-700-10000.fits"%mos1,"%s-back-im-det-700-10000.f
 mos2img,mos2back="%s-obj-im-det-700-10000.fits"%mos2,"%s-back-im-det-700-10000.fits"%mos2
 pnimg,pnootimg,pnback="%s-obj-im-det-700-10000.fits"%pn,"%s-obj-im-det-700-10000-oot.fits"%pn,"%s-back-im-det-700-10000.fits"%pn
 
-mos1x=commands.getoutput("grep 'mos1' log/Center.log | gawk '{print $5}'")
-mos1y=commands.getoutput("grep 'mos1' log/Center.log | gawk '{print $6}'")
+mos1x=float(commands.getoutput("grep 'mos1' Centre.txt | gawk '{print $3}'"))#commands is for python 2, change to subprocess for python 3
+mos1y=float(commands.getoutput("grep 'mos1' Centre.txt | gawk '{print $4}'"))
 
-mos2x=commands.getoutput("grep 'mos2' log/Center.log | gawk '{print $5}'")
-mos2y=commands.getoutput("grep 'mos2' log/Center.log | gawk '{print $6}'")
+mos2x=float(commands.getoutput("grep 'mos2' Centre.txt | gawk '{print $3}'"))
+mos2y=float(commands.getoutput("grep 'mos2' Centre.txt | gawk '{print $4}'"))
 
-pnx=commands.getoutput("grep 'pn' log/Center.log | gawk '{print $5}'")
-pny=commands.getoutput("grep 'pn' log/Center.log | gawk '{print $6}'")
+pnx=float(commands.getoutput("grep 'pn' Centre.txt | gawk '{print $3}'"))
+pny=float(commands.getoutput("grep 'pn' Centre.txt | gawk '{print $4}'"))
 
-ootfactor=float(commands.getoutput("grep -i 'OOT scale factor: ' log/17comb-pn.log | awk '{print $5}'"))
-xcmos1,ycmos1=a.coordinateconversion("full_spectrum_mos1/%s"%mos1img,mos1x,mos1y)
-xcmos2,ycmos2=a.coordinateconversion("full_spectrum_mos2/%s"%mos2img,mos2x,mos2y)
-xcpn,ycpn=a.coordinateconversion("full_spectrum_pn/%s"%pnimg,pnx,pny)
 
 
 #produce the files necessary for counts estimation in different annuli. The commands are extracted from command/FOV_imgspe_mos2.csh and written into full_spectrum_mos2/backgd_command_mos2.csh. This csh file is run automatically. Check this file and run the commands line by line if things go wrong.
 if whichstep=="1":
-   path_to_caldb="/net/cluster491/software/newton/caldb/esas"
    a.makeImage(mos1,elow_ori,ehigh_ori,elow_new,ehigh_new,path_to_caldb)
    a.makeImage(mos2,elow_ori,ehigh_ori,elow_new,ehigh_new,path_to_caldb)
    a.makeImage(pn,elow_ori,ehigh_ori,elow_new,ehigh_new,path_to_caldb)
@@ -84,6 +75,11 @@ if whichstep=="2a":
 ###
 
 if whichstep=="3":
+   ootfactor=float(commands.getoutput("grep -i 'OOT scale factor: ' log/comb-pn.log | awk '{print $5}'"))
+   xcmos1,ycmos1=a.coordinateconversion("full_spectrum_mos1/%s"%mos1img,mos1x,mos1y)
+   xcmos2,ycmos2=a.coordinateconversion("full_spectrum_mos2/%s"%mos2img,mos2x,mos2y)
+   xcpn,ycpn=a.coordinateconversion("full_spectrum_pn/%s"%pnimg,pnx,pny)
+
    inner=0
    region,counts,sn,sbratiom2=a.DefineRegionCounts(inner,limit,30,1500,xcmos2,ycmos2,"full_spectrum_mos2/%s"%mos2img,"full_spectrum_mos2/%s"%mos2back)
    b,c,sbratiom1=a.DefineRegionCounts(inner,limit,30,1500,xcmos1,ycmos1,"full_spectrum_mos1/%s"%mos1img,"full_spectrum_mos1/%s"%mos1back,checkregion="no",Region=region)
@@ -142,11 +138,15 @@ if whichstep=="3":
    print("last region(mid point) to limiting radius ratio: ","{:.2f}".format(lasttolimitratio))
    print("The result is written in spectral_region.dat")
 
-   a.writeannulus("spectral_region_tmp.dat",AllRegion)
+   a.writeannulus("spectral_region.dat",AllRegion)
 
 
 
 if whichstep=="4":
+   ootfactor=float(commands.getoutput("grep -i 'OOT scale factor: ' log/comb-pn.log | awk '{print $5}'"))
+   xcmos1,ycmos1=a.coordinateconversion("full_spectrum_mos1/%s"%mos1img,mos1x,mos1y)
+   xcmos2,ycmos2=a.coordinateconversion("full_spectrum_mos2/%s"%mos2img,mos2x,mos2y)
+   xcpn,ycpn=a.coordinateconversion("full_spectrum_pn/%s"%pnimg,pnx,pny)
    m1cts,m1sn,sbratiom1 = a.howmanyCounts(xcmos1,ycmos1,"full_spectrum_mos1/%s"%mos1img,"full_spectrum_mos1/%s"%mos1back,inradius/60.,outradius/60.)
    m2cts,m2sn,sbratiom2 = a.howmanyCounts(xcmos2,ycmos2,"full_spectrum_mos2/%s"%mos2img,"full_spectrum_mos2/%s"%mos2back,inradius/60.,outradius/60.)
    pncts,pnsn,sbratiopn = a.howmanyCounts(xcpn,ycpn,"full_spectrum_pn/%s"%pnimg,"full_spectrum_pn/%s"%pnback,inradius/60.,outradius/60.,ootimg="full_spectrum_pn/%s"%pnootimg,ootscalefactor=ootfactor)
